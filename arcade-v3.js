@@ -8,7 +8,7 @@ const NEW = [
  ['impostor','Maschere Intruse','Una maschera è diversa: trovala!','🎭','quick',77,'Osserva gli emblemi e tocca quello diverso dagli altri.'],
  ['runes','Ordini del Sovrano','Segui le rune dettate dal Re.','🔷','clever',77,'Scegli la forma richiesta. Leggi il comando prima di agire.'],
  ['signals','Segnali Contraddittori','La parola non è sempre ciò che sembra.','🎨','quick',77,'In alcuni round conta il colore del testo; in altri conta la parola.'],
- ['garden','Giardino delle Illusioni','Un fiore non appartiene al giardino.','🌷','quick',77,'In una griglia di nove fiori, individua quello differente.'],
+ ['garden','Giardino delle Illusioni','Trova il fiore diverso: più sei veloce, più punti ottieni!','🌷','quick',95,'Dodici aiuole, sempre più affollate: trova il fiore con i petali di colore diverso. Ogni risposta corretta dà da 2 a 10 punti in base alla velocità!'],
  ['clockwork','Orologeria Reale','Sblocca dieci ingranaggi.','⚙️','quick',77,'Ferma la lancetta al centro della zona dorata.'],
  ['builders','Costruttori del Trono','Costruisci il monumento più preciso.','🏗️','quick',77,'Ferma il blocco esattamente sopra la base. Ogni piano è più difficile.'],
  ['market','Mercato dei Miracoli','Sicurezza o avidità? Dodici trattative.','🪙','strategy',78,'Scegli tra monete certe e scommesse rischiose. Ogni trattativa conta.'],
@@ -51,9 +51,9 @@ function question(game,i,random){
   const x=dice(random,4,16),a=dice(random,2,12),b=dice(random,1,8),result=x+a+b,opts=mix(random,[x,x+1,x-1,x+2]).map(String);
   return {title:'Quanto pesa il sacco?',subtitle:'BILANCIA '+(i+1),visual:`<div class="arc-equation">🎒 + ${a} + ${b} <span>=</span> ${result}</div><p>Il sacco 🎒 ha un peso segreto.</p>`,opts,answer:opts.indexOf(String(x)),hint:'🎒 pesa '+x};
  }
- if(game==='impostor'||game==='garden'){
-  const count=game==='garden'?9:8,base=one(random,['💎','🦋','🌸','👑','⭐','🍀']),other=one(random,['🪙','🌼','🍁','☄️','🔱','🌙'].filter(x=>x!==base)),at=dice(random,0,count-1);
-  return {title:game==='garden'?'Quale fiore è fuori posto?':'Quale emblema è diverso?',subtitle:'OCCHIO DI FALCO '+(i+1),visual:`<div class="arc-symbol-title">${game==='garden'?'🌳 IL GIARDINO SEGRETO':'🎭 SALONE DELLE MASCHERE'}</div>`,opts:Array.from({length:count},(_,j)=>j===at?other:base),answer:at,hint:'Il simbolo diverso era '+other,grid:true};
+ if(game==='impostor'){
+  const count=8,base=one(random,['💎','🦋','🌸','👑','⭐','🍀']),other=one(random,['🪙','🌼','🍁','☄️','🔱','🌙'].filter(x=>x!==base)),at=dice(random,0,count-1);
+  return {title:'Quale emblema è diverso?',subtitle:'OCCHIO DI FALCO '+(i+1),visual:'<div class="arc-symbol-title">🎭 SALONE DELLE MASCHERE</div>',opts:Array.from({length:count},(_,j)=>j===at?other:base),answer:at,hint:'Il simbolo diverso era '+other,grid:true};
  }
  if(game==='runes'){
   const SHAPES=['CERCHIO','TRIANGOLO','QUADRATO','ROMBO'],ICONS=['●','▲','■','◆'],n=dice(random,0,3),opts=mix(random,SHAPES.map((x,j)=>ICONS[j]+' '+x));
@@ -64,6 +64,71 @@ function question(game,i,random){
   return {title:mode?'Seleziona la PAROLA':'Seleziona il COLORE del testo',subtitle:'ATTENZIONE '+(i+1),visual:`<div class="arc-colorword" style="color:${HEX[paint]}">${COLORS[word]}</div><p class="arc-reference">La parola e il colore possono essere diversi.</p>`,opts,answer:opts.indexOf(COLORS[target]),hint:'Risposta: '+COLORS[target]};
  }
  throw Error('Domanda sconosciuta: '+game);
+}
+// In questo minigioco la velocità pesa realmente nel punteggio,
+// invece di assegnare il medesimo valore a ogni risposta esatta.
+function gardenRawPoints(correct,timeMs){
+ if(!correct)return 0;
+ return Math.max(2,Math.min(10,Math.round(10-8*Math.min(1,Math.max(0,timeMs)/5200)*10)/10));
+}
+function gardenFlower(hue){
+ const petals=Array.from({length:6},(_,k)=>'<ellipse cx="40" cy="20" rx="14" ry="20" transform="rotate('+(k*60)+' 40 40)" fill="hsl('+hue+' 83% 62%)" stroke="hsl('+hue+' 78% 39%)" stroke-width="1.5"/>').join('');
+ return '<svg class="garden-flower" viewBox="0 0 80 80" aria-hidden="true"><path d="M40 54 Q38 67 45 74" stroke="#4ba86c" stroke-width="3" fill="none"/>'+petals+'<circle cx="40" cy="40" r="11" fill="#ffe18b" stroke="#dca64f" stroke-width="2"/><circle cx="37" cy="36" r="2.3" fill="#c07c4c"/></svg>';
+}
+function gardenGame(game,session,random){
+ const rounds=12;let index=0,total=0,correct=0,misses=0,combinedTime=0;
+ const startedAt=performance.now();
+ function draw(){
+  if(session.done)return;
+  if(index>=rounds){
+   const average=correct?Math.round(combinedTime/correct)/1000:0;
+   done(session,total/120*100,'Giardino completato · '+correct+'/'+rounds+' fiori · media '+average.toFixed(2)+' s');return;
+  }
+  const count=index<4?9:index<8?12:16,cols=count===9?3:4;
+        base=dice(random,0,359),delta=(index<4?70:index<8?42:26)*(random()<.5?-1:1),
+        hue=(base+delta+360)%360,odd=dice(random,0,count-1),
+        started=performance.now(),limit=5200;
+  const stage=frame(index,rounds,total/120*100);
+  stage.innerHTML=puzzle('Trova il fiore con petali diversi','AIUOLA '+(index+1)+' / '+rounds,
+   '<div class="garden-banner"><span>🌷 GIARDINO DELLE ILLUSIONI</span><b id="garden-remaining">5.2 s</b></div>',
+   'Più rapidamente lo trovi, più punti guadagni. Errore o tempo scaduto: zero punti per questa aiuola.')
+   +'<div class="garden-grid" style="--garden-columns:'+cols+'">'+Array.from({length:count},(_,i)=>
+     '<button class="garden-tile" data-flower="'+i+'" aria-label="Fiore '+(i+1)+'">'+gardenFlower(i===odd?hue:base)+'</button>').join('')+'</div>'
+   +'<div class="garden-legend"><span>⚡ Rapido: 10 punti</span><span>🐢 Lento: 2 punti</span><span>✕ Errore: 0 punti</span></div>'
+   +'<div class="garden-timer"><i id="garden-timebar" style="width:100%"></i></div>';
+  let locked=false;
+  const interval=setInterval(()=>{
+   if(session.done||locked)return;
+   const timeLeft=Math.max(0,limit-(performance.now()-started));
+   const label=stage.querySelector('#garden-remaining'),bar=stage.querySelector('#garden-timebar');
+   if(label)label.textContent=(timeLeft/1000).toFixed(1)+' s';
+   if(bar)bar.style.width=(timeLeft/limit*100)+'%';
+  },55);
+  const originalCleanup=session.cleanup;
+  session.cleanup=()=>{clearInterval(interval);originalCleanup?.()};
+  const pending=laterS(session,limit,()=>answer(-1));
+  function answer(selected){
+   if(locked||session.done)return;
+   locked=true;clearInterval(interval);clearTimeout(pending);
+   const elapsed=Math.min(limit,performance.now()-started),ok=selected===odd;
+   const gained=gardenRawPoints(ok,elapsed);
+   if(ok){correct++;combinedTime+=elapsed}else misses++;
+   total+=gained;index++;session.raw=norm(total/120*100);setPoints(session.raw);
+   stage.querySelectorAll('[data-flower]').forEach(btn=>{
+    btn.disabled=true;
+    if(Number(btn.dataset.flower)===odd)btn.classList.add('arc-correct');
+    if(Number(btn.dataset.flower)===selected&&!ok)btn.classList.add('arc-wrong');
+   });
+   const spent=(elapsed/1000).toFixed(2);
+   setFeedback(ok?'⚡ '+spent+' s · +'+gained+' punti per la velocità!':
+    (selected===-1?'⏱ Tempo scaduto · +0 punti':'Fiore sbagliato · +0 punti'),ok);
+   laterS(session,850,draw);
+  }
+  stage.querySelector('.garden-grid').addEventListener('click',e=>{
+   const b=e.target.closest('[data-flower]');if(b)answer(Number(b.dataset.flower));
+  });
+ }
+ draw();
 }
 function quizGame(game,session,random){const rounds=12;let index=0,right=0,wrong=0;
  function draw(){if(session.done)return;if(index>=rounds){done(session,right/rounds*100-wrong*1.4,'Hai risolto '+right+' prove su '+rounds);return}
@@ -196,7 +261,8 @@ window.gamePage=function(){const r=state.room,g=games.find(x=>x.id===r.miniId);i
  return `<header class="arc-page-heading"><div><span class="arc-overline">${r.mode==='tiebreak'?'⚔ SPAREGGIO ELIMINAZIONE':`ROUND ${r.round} · GRADINO ${r.initialCount-alive().length+1}`}</span><h1>${g.symbol} ${safe(g.name)}</h1><p>${safe(g.desc)}</p></div><button class="btn btn-ghost btn-sm" data-action="leave">← ESCI</button></header><div class="arc-layout"><section class="arc-main"><div class="arc-board"><div class="arc-board-top"><div><span class="arc-live-dot"></span> IN DIRETTA <span class="arc-divider-dot">·</span> ${r.roundsPerElim-((r.round-1)%r.roundsPerElim)} ALL’ELIMINAZIONE</div><div class="arc-clock"><small>⏱</small><b id="clock">${g.duration}</b><small>SEC</small></div></div><div class="arc-objective"><b>🎯 OBIETTIVO</b><span>${safe(g.how)}</span></div>${allowed?'<div id="game-mount" class="arc-mount"></div>':'<div class="arc-spectator"><span>👁️</span><h3>MODALITÀ SPETTATORE</h3><p>Continua a seguire la partita e i risultati degli NPC.</p></div>'}</div><div class="arc-npc-wrap">${botArena(r,g)}</div></section><aside class="arc-side">${scoreboard(r)}<details class="arc-stairs"><summary>👑 Vedi la scalinata</summary>${stepMarkup(r)}</details></aside></div>`;
 };
 window.rawForBot=function(p,g,r){if(!g?.reborn)return legacyBot(p,g,r);const rnd=botRandom(p,g,r),c=character(p.avatar),difficulty={easy:.39,normal:.62,hard:.82}[r.difficulty]||.62,skill=Math.min(.96,difficulty+(c.trait===g.kind?.1:0));let total=0;
- if(['courier','alchemy','balance','impostor','runes','signals','garden'].includes(g.id)){for(let i=0;i<12;i++)total+=rnd()<skill?100/12:-1.4;}
+ if(g.id==='garden'){for(let i=0;i<12;i++){const hit=rnd()<Math.min(.98,.54+skill*.44);const reactionMs=(.45+(1-skill)*3.1+rnd()*.9)*1000;total+=gardenRawPoints(hit,reactionMs)/120*100;}}
+ else if(['courier','alchemy','balance','impostor','runes','signals'].includes(g.id)){for(let i=0;i<12;i++)total+=rnd()<skill?100/12:-1.4;}
  else if(['clockwork','builders'].includes(g.id)){for(let i=0;i<10;i++)total+=norm(27+skill*75+(rnd()-.5)*40)/10;}
  else if(g.id==='market'){let wallet=0;for(let i=0;i<12;i++){const risk=rnd()<skill*.75;if(risk)wallet+=rnd()<.6?17:-7;else wallet+=8;}total=wallet/135*100;}
  else if(g.id==='dive'){let saved=0,bag=0,air=5;for(let i=0;i<12;i++){if(air>1&&rnd()<skill){air--;bag+=10+Math.floor(rnd()*10);}else{saved+=bag;bag=0;air=5;}}total=(saved+bag*.55)/140*100;}
@@ -209,7 +275,8 @@ window.rawForBot=function(p,g,r){if(!g?.reborn)return legacyBot(p,g,r);const rnd
 };
 window.startMini=function(){const room=state.room,g=games.find(x=>x.id===room.miniId);if(!g?.reborn)return legacyStart();const s=createTimer(g.duration);if(state.online)checkExistingSubmission(s);if(!miniMount())return;
  welcome(g,()=>{const rnd=randFor(g.id);
-  if(['courier','alchemy','balance','impostor','runes','signals','garden'].includes(g.id))return quizGame(g,s,rnd);
+  if(g.id==='garden')return gardenGame(g,s,rnd);
+  if(['courier','alchemy','balance','impostor','runes','signals'].includes(g.id))return quizGame(g,s,rnd);
   if(['clockwork','builders'].includes(g.id))return meterGame(g,s,rnd);
   if(g.id==='market')return marketGame(g,s,rnd);
   if(g.id==='dive')return diveGame(g,s,rnd);
