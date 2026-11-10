@@ -275,7 +275,7 @@ function liftmaster(s,g,r){
   for(const p of pool.filter(x=>x.stage==='aboard'&&x.dest===floor)){p.stage='delivered';delivered++;}
   const room=3-pool.filter(x=>x.stage==='aboard').length;
   for(const p of pool.filter(x=>x.stage==='waiting'&&x.origin===floor).slice(0,room))p.stage='aboard';
-  let spare=Math.max(0,Math.round(g.duration-elapsed));score(s,delivered*100+spare,delivered+' / '+max+' consegnati');
+  let spare=cl(Math.max(0,Math.round(g.duration-elapsed)),0,99);score(s,delivered*100+spare,delivered+' / '+max+' consegnati');
   if(delivered===max){finished=true;finish(s,delivered*100+spare,'Tutti i '+max+' passeggeri consegnati!')}
  }
  function show(){
@@ -297,7 +297,7 @@ function liftmaster(s,g,r){
   if(running){floor+=Math.sign(target-floor);service();if(floor===target)running=false;}
   else service();
   show();
-  if(elapsed>=99){finish(s,delivered*100+Math.max(0,Math.round(g.duration-elapsed)),delivered+' passeggeri consegnati');}
+  if(elapsed>=99){finish(s,delivered*100+cl(Math.round(g.duration-elapsed),0,99),delivered+' passeggeri consegnati');}
  },720);
  addCleanup(s,()=>clearInterval(tick));show();
 }
