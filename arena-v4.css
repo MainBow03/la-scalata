@@ -1,0 +1,99 @@
+/* LA SCALATA · 0.5 · Catalogo + Arcade Lab */
+.v4-catalog-launch{background:linear-gradient(135deg,#153a50,#265a6c)!important;border:1px solid #93d7eb!important;color:#e1fbff!important;box-shadow:0 8px 24px #6cc8e21b!important}
+.v4-catalog-page{max-width:1320px;margin:0 auto;animation:v4-fade .35s ease-out}
+@keyframes v4-fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.v4-catalog-heading{display:flex;align-items:start;justify-content:space-between;gap:20px;margin:16px 0 25px}
+.v4-catalog-heading .section-title{font-size:clamp(44px,5vw,78px);line-height:.95;color:#f4d8a1}
+.v4-catalog-heading .lead{max-width:730px}
+.v4-catalog-stats{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px}
+.v4-catalog-stats span{padding:13px 17px;background:linear-gradient(120deg,#183a50,#122b42);border:1px solid #8cbfd044;border-radius:14px;color:#c7e7eb;font-size:12px;font-weight:800;letter-spacing:.05em}
+.v4-catalog-stats b{font-size:22px;color:#ffdf93}
+.v4-catalog-tools{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px;margin-bottom:18px}
+.v4-catalog-filters{display:flex;flex-wrap:wrap;gap:8px}
+.v4-filter{border:1px solid #a1cddd4d;background:#1a354b;color:#c5e6ee;border-radius:35px;min-height:43px;padding:8px 17px;font-weight:800;font-size:12px}
+.v4-filter.current{color:#16263c;background:#f9dda2;border-color:#fff1c8;box-shadow:0 6px 20px #ebd79f28}
+#v4-catalog-search{border:1px solid #7cbfcd74;background:#0e253a;color:white;border-radius:13px;padding:12px 15px;min-height:45px;min-width:min(100%,280px);font-size:14px}
+#v4-catalog-search::placeholder{color:#afc4d5}
+.v4-catalog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:15px;align-items:stretch}
+.v4-catalog-card{position:relative;display:flex;flex-direction:column;gap:10px;align-items:flex-start;min-height:220px;padding:19px;text-align:left;line-height:1.5;border-radius:19px;background:linear-gradient(145deg,#1d3d52,#102738 68%,#0e2438);border:1px solid #9ac7dc42;color:white;box-shadow:0 8px 24px #010f1f66;transition:transform .18s,border-color .18s,background .18s}
+.v4-catalog-card:hover{transform:translateY(-3px);border-color:#ffe1a1}
+.v4-catalog-card.selected{border-color:#ffe0a1;background:linear-gradient(145deg,#335369,#193448,#122b43)}
+.v4-game-symbol{display:grid;place-items:center;width:57px;height:57px;border-radius:17px;background:linear-gradient(145deg,#547784,#22566e);border:1px solid #8ecddd44;font-size:30px}
+.v4-game-meta{font-size:10px;letter-spacing:.1em;font-weight:900;color:#ffdc97}
+.v4-catalog-card strong{font:900 25px 'Barlow Condensed',sans-serif;line-height:1;color:#fff1d8}
+.v4-catalog-card small{font-size:12px;color:#cbdde8;line-height:1.6}
+.v4-game-more{margin-top:auto;padding-top:8px;font-size:11px;font-weight:900;letter-spacing:.09em;color:#93e1df}
+.v4-game-rules{font-size:12px;line-height:1.8;color:#eff8fc;border-top:1px solid #9be1c353;padding-top:12px;margin-top:2px}
+.v4-archive{margin:30px 0;padding:16px;border:1px solid #91bcc54d;background:#132d40;border-radius:16px}
+.v4-archive summary{cursor:pointer;font-size:13px;font-weight:800;color:#c7dbe8}
+.v4-archive-list{display:flex;flex-wrap:wrap;gap:8px;margin:15px 0 0}
+.v4-archive-list span{background:#ffffff0d;border:1px solid #ffffff15;padding:8px 11px;border-radius:22px;font-size:12px}
+.v4-no-results{background:#183446;border:1px solid #9ac7dc33;border-radius:14px;padding:30px;text-align:center;color:#c9e3ed}
+/* Common Arcade Lab panel */
+.v4-description{max-width:680px;margin:0 auto 15px;padding:13px 16px;background:#15364a;border:1px solid #6197a848;border-radius:14px;color:#deedf3;line-height:1.6;font-size:13px;text-align:center}
+.v4-description b{color:#ffe09c}
+.v4-progress-text{text-align:center;font-size:13px;font-weight:800;color:#d4dfeb;margin:14px auto 0;letter-spacing:.03em}
+.v4-controls{display:flex;justify-content:center;gap:12px;max-width:650px;margin:19px auto 0;flex-wrap:wrap;touch-action:manipulation}
+.v4-controls button,.v4-maze-controls button{background:linear-gradient(160deg,#356581,#173b55);border:1px solid #97b9d477;color:#fff4e7;border-radius:13px;min-height:56px;padding:12px 18px;font-size:14px;font-weight:900;min-width:100px;flex:1;box-shadow:0 5px 0 #091b2e}
+.v4-controls button:active,.v4-maze-controls button:active{transform:translateY(3px);box-shadow:0 2px 0 #091b2e}
+.v4-controls .v4-fire{background:linear-gradient(150deg,#ffc976,#c7804e);color:#261d32;border:1px solid #ffdfa0;flex:1.3}
+/* Trains and rails */
+.v4-rail-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));width:min(100%,510px);margin:0 auto;gap:5px;padding:9px;border:3px solid #9ca9d1;border-radius:13px;background:repeating-linear-gradient(90deg,#142d43,#142d43 16px,#12283b 16px,#12283b 33px)}
+.v4-rail{position:relative;display:grid;place-items:center;aspect-ratio:1;min-width:0;min-height:45px;padding:3px;border:1px solid #9bb4b855;border-radius:7px;background:linear-gradient(145deg,#3f5e70,#223849);color:#fef4d6}
+.v4-rail:hover:not(:disabled){background:#4f7382;border-color:#ffe3a9}
+.v4-rail.fixed{border:2px solid #f4d999;background:#3b564e}
+.v4-rail-svg{display:grid;place-items:center;width:100%;height:100%;transition:transform .18s;pointer-events:none}
+.v4-rail svg{width:100%;height:100%;overflow:visible;pointer-events:none}
+.v4-rail svg .rail-outer{fill:none;stroke:#4c3225;stroke-width:23;stroke-linecap:round;stroke-linejoin:round}
+.v4-rail svg .rail-inner{fill:none;stroke:#e5bd7b;stroke-width:11;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:14 8}
+.v4-rail svg circle{fill:#fff0d2;stroke:#513a25;stroke-width:3}
+.v4-rail b{position:absolute;inset:auto 0 0;font-size:15px;line-height:1.2;pointer-events:none}
+/* Maze */
+.v4-maze{width:min(100%,490px);display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:2px;padding:6px;border:2px solid #96bdd7;border-radius:11px;margin:0 auto;background:#102d44;aspect-ratio:1}
+.v4-maze-tile{display:grid;place-items:center;min-width:0;min-height:0;font-size:clamp(12px,2.4vw,27px);border-radius:3px}
+.v4-maze-tile.wall{background:linear-gradient(160deg,#587b92,#294b62);box-shadow:inset -2px -2px #0f2738}
+.v4-maze-tile.path{background:#071a29;border:1px solid #20384a}
+.v4-maze-tile.player{background:#317776;box-shadow:0 0 11px #77d6b08f}
+.v4-maze-controls{margin:17px auto 0;display:flex;flex-direction:column;align-items:center;gap:6px;max-width:350px}
+.v4-maze-controls button{min-width:72px;max-width:110px;min-height:49px}
+.v4-maze-controls>div{display:flex;justify-content:center;gap:7px;width:100%}
+/* Fortress */
+.v4-fortress{width:min(100%,670px);margin:auto;background:linear-gradient(#233d56,#102c41);padding:16px;border-radius:15px;border:1px solid #88b5c87c}
+.v4-fortress-head{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#f7e2c2;font-weight:800;font-size:12px;margin-bottom:12px}
+.v4-fortress-head strong{color:#f7a1b7;font-size:17px;letter-spacing:.1em}
+.v4-enemies{display:flex;flex-direction:column;gap:7px}
+.v4-fortress-lane{height:75px;position:relative;border:1px solid #7799af6d;border-radius:11px;background:repeating-linear-gradient(90deg,#25445c,#25445c 18px,#28475c 18px,#28475c 36px);overflow:hidden}
+.v4-fortress-lane.selected{border:2px solid #f8dd96;box-shadow:0 0 14px #f4d38955}
+.v4-cannon{position:absolute;left:0;top:20px;display:grid;place-items:center;background:#123344;border-radius:11px;width:56px;height:42px;color:#f7dfb9;font-size:24px}
+.v4-foe{position:absolute;top:22px;font-size:27px;transition:left .09s linear;filter:drop-shadow(0 4px 4px #0007)}
+/* Mosaic */
+.v4-mosaic-preview{font-size:clamp(11px,2vw,14px);margin:12px auto 15px;color:#d6eaf2;text-align:center;background:#173747;border-radius:12px;max-width:530px;padding:10px}
+.v4-mosaic{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;width:min(100%,425px);margin:0 auto;background:#1a4156;padding:8px;border-radius:14px;border:2px solid #91bcce}
+.v4-mosaic-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:1;min-height:55px;min-width:0;border:1px solid #c2d7e9a1;border-radius:10px;background:linear-gradient(145deg,#4f7fa0,#274b68);color:#fff7e6;font-weight:850}
+.v4-mosaic-tile span{font-size:clamp(30px,5vw,53px)}
+.v4-mosaic-tile small{color:#ffd796;font-size:12px}
+.v4-mosaic-tile.blank{background:#09283d;box-shadow:inset 0 0 18px #0008;border:1px dashed #50748b}
+/* Elevator */
+.v4-elevator{max-width:540px;margin:0 auto;background:#102a3d;border:2px solid #789ab0;border-radius:17px;padding:14px}
+.v4-floor{display:grid;grid-template-columns:35px minmax(0,1fr) 55px;align-items:center;gap:10px;min-height:53px;border-bottom:2px solid #5871845c;color:#f2e7d8}
+.v4-floor b{font:900 20px 'Barlow Condensed',sans-serif;color:#ffd99a}
+.v4-floor.active{background:#2b5262;border-left:4px solid #f8df9a}
+.v4-floor-shaft{font-size:22px;text-align:center;background:#1a3c55;height:100%;display:grid;place-items:center;border:1px solid #7896a055}
+.v4-floor-queue{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.v4-passenger{font:850 13px Inter,sans-serif;background:#8ccae036;color:#fff2dc;border-radius:9px;padding:5px 7px}
+.v4-car{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;padding:13px;border-radius:11px;background:linear-gradient(120deg,#316374,#23405c);font-size:13px;font-weight:800}
+/* Runner */
+.v4-runner{position:relative;overflow:hidden;height:255px;max-width:690px;margin:0 auto;border:2px solid #89b6d3;border-radius:16px;background:linear-gradient(180deg,#426e97 0%,#7ab3bf 62%,#345466 63%,#173e58 100%)}
+.v4-runner-sky{font-size:42px;letter-spacing:.45em;text-align:center;opacity:.65;position:absolute;left:20%;top:5%}
+.v4-runner-avatar{position:absolute;left:14%;bottom:18px;z-index:2;font-size:57px;transition:bottom .16s,font-size .14s;filter:drop-shadow(0 4px 4px #092239)}
+.v4-runner-avatar.jump{bottom:103px}.v4-runner-avatar.duck{font-size:42px;bottom:8px}
+.v4-runner-obstacles{position:absolute;inset:0;pointer-events:none}
+.v4-obstacle{position:absolute;bottom:17px;font-size:46px;line-height:1}
+.v4-obstacle.high{bottom:78px;background:#d5e6f0;border:3px solid #244b64;color:#314d5d;width:80px;height:28px;display:grid;place-items:center;font-size:43px;box-shadow:0 0 12px #b0d5e0}
+.v4-runner-floor{position:absolute;bottom:0;width:100%;height:18px;background:repeating-linear-gradient(90deg,#d6b085 0,#d6b085 13px,#765b4a 13px,#765b4a 23px)}
+.v4-runner-stats{display:flex;justify-content:space-between;gap:10px;max-width:690px;margin:12px auto;font-weight:850;color:#e7f4fb}
+.v4-runner-stats #v4-runner-hearts{color:#ff95ab;font-size:21px}
+/* Breakout */
+#v4-breakout{display:block;width:min(100%,690px);height:auto;aspect-ratio:480/300;touch-action:none;border:2px solid #86bad2;border-radius:14px;margin:0 auto;background:#0b253b;box-shadow:inset 0 0 20px #0008}
+@media(max-width:730px){.v4-catalog-heading{flex-direction:column}.v4-catalog-grid{grid-template-columns:repeat(auto-fit,minmax(162px,1fr));gap:10px}.v4-catalog-card{padding:14px;min-height:190px}.v4-catalog-card strong{font-size:21px}.v4-catalog-tools{align-items:stretch}.v4-catalog-tools input{width:100%}.v4-controls{gap:7px}.v4-controls button{min-width:78px;padding:9px 10px;font-size:12px}.v4-fortress-lane{height:65px}.v4-runner{height:215px}.v4-runner-avatar{font-size:43px}.v4-obstacle{font-size:37px}.v4-obstacle.high{bottom:65px;height:24px;width:64px}}
+@media(max-width:410px){.v4-rail-grid{gap:3px;padding:4px}.v4-rail{min-height:32px}.v4-rail b{font-size:11px}.v4-maze{gap:1px}.v4-maze-controls button{min-height:45px;padding:8px}.v4-runner{height:180px}.v4-runner-avatar.jump{bottom:78px}.v4-obstacle.high{bottom:54px}.v4-catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
