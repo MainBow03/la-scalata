@@ -44,3 +44,59 @@ body::before{background-image:linear-gradient(#9dcbe708 1px,transparent 1px),lin
 @media(max-width:1100px){.arc-layout{grid-template-columns:minmax(0,1fr)}.arc-side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.arc-stairs .throne-room{min-height:500px!important}}
 @media(max-width:650px){#app{padding:19px 13px 45px}.topbar{padding:12px 15px!important}.brand{font-size:23px}.arc-page-heading{flex-direction:column}.arc-page-heading h1{font-size:48px}.arc-board-top{padding:11px 12px;font-size:10px}.arc-clock b{font-size:27px}.arc-objective{flex-direction:column;gap:4px;padding:14px}.arc-mount{padding:15px 11px;min-height:440px}.arc-stage{min-height:300px;gap:13px}.arc-puzzle{gap:11px}.arc-question h3{font-size:32px}.arc-options{gap:9px}.arc-option{min-height:76px;font-size:14px;padding:10px 7px}.arc-nine .arc-option{font-size:26px;min-height:65px}.arc-three{grid-template-columns:1fr!important}.arc-offer{min-height:73px;gap:4px}.arc-offer b{font-size:19px}.arc-offer small{font-size:11px}.arc-welcome p{font-size:15px}.arc-welcome-art{font-size:54px}.arc-welcome h3{font-size:42px}.arc-side{display:block}.arc-side>*{margin-bottom:15px}.arc-lane{height:126px;font-size:28px}.arc-guard{height:85px;font-size:35px}.arc-echo{min-height:100px;font-size:26px}.arc-pad button{min-height:72px;font-size:26px}.arc-drum{height:195px;width:195px}.arc-stairs .throne-room{min-height:450px!important}.arc-status{font-size:10px}.arc-status b{font-size:22px}}
 @media(prefers-reduced-motion:reduce){.arc-live-dot{animation:none}.arc-option,.arc-drum{transition:none!important}}
+
+/* 0.4 · Giardino delle Illusioni: gara di riconoscimento a tempo */
+.garden-banner{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:0 auto 15px;max-width:570px;padding:10px 14px;border-radius:14px;background:linear-gradient(100deg,#163d39,#1c344f);border:1px solid #72cead68;color:#baf6c8;font-size:12px;font-weight:900;letter-spacing:.08em}
+.garden-banner b{font-size:20px;font-variant-numeric:tabular-nums;color:#ffe4a7;white-space:nowrap}
+.garden-grid{--garden-columns:3;display:grid;grid-template-columns:repeat(var(--garden-columns),minmax(0,1fr));gap:clamp(6px,1.4vw,11px);max-width:540px;margin:0 auto;align-items:stretch;width:100%}
+.garden-tile{display:grid;place-items:center;aspect-ratio:1.12;min-width:0;min-height:65px;padding:8px;border:2px solid #66ae879e;border-radius:14px;background:radial-gradient(circle at 60% 30%,#377050aa,#1d4534 65%,#153725);box-shadow:inset 0 1px 8px #8be2b61d,0 5px #0d3425;color:white;transition:background .15s,transform .15s,border-color .15s}
+.garden-tile:focus-visible{outline:3px solid #f7d382;outline-offset:2px}
+.garden-tile:hover:not(:disabled){transform:translateY(-3px);background:radial-gradient(circle at 40% 30%,#5ca27c,#244e36)}
+.garden-tile svg{width:min(100%,78px);height:auto;overflow:visible;max-height:76px;filter:drop-shadow(0 5px 3px #041a0c77)}
+.garden-tile.arc-correct{border-color:#ffe49b;background:#437b5a;box-shadow:0 0 0 3px #ffe49b66,0 0 22px #f0dd8877}
+.garden-tile.arc-wrong{border-color:#fa729d;background:#82384f;box-shadow:inset 0 0 20px #fa729d44}
+.garden-legend{margin:16px auto 9px;max-width:570px;display:flex;flex-wrap:wrap;justify-content:center;gap:7px 13px;color:#d5e4e8;font-size:12px;font-weight:700}
+.garden-legend span{padding:5px 10px;background:#ffffff0a;border-radius:40px}
+.garden-timer{width:min(100%,540px);height:9px;margin:0 auto;border-radius:15px;background:#192f37;overflow:hidden}
+.garden-timer i{display:block;background:linear-gradient(90deg,#68d9a3,#ffe0a0);height:100%;transition:width .06s linear;border-radius:15px}
+@media(max-width:500px){.garden-tile{min-height:52px;padding:5px;border-radius:11px}.garden-tile svg{max-height:60px}.garden-grid{gap:6px}.garden-banner{font-size:10px;padding:8px}.garden-banner b{font-size:16px}.garden-legend{font-size:10px}}
+
+/* 0.4 · Classifica di fine minigioco: podio, graduatoria e premi trasparenti */
+.verdict-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(270px,.65fr);gap:22px;align-items:start}
+.verdict-main{min-width:0;display:flex;flex-direction:column;gap:18px}
+.verdict-banner{text-align:center;border:1px solid #d6bc8699;border-radius:23px;padding:25px 22px;background:radial-gradient(ellipse at center top,#8a69376a,transparent 75%),linear-gradient(145deg,#263e51,#131f33);box-shadow:0 18px 50px #02091477}
+.verdict-banner span{font-size:11px;font-weight:850;color:#ffe3a9;letter-spacing:.22em}
+.verdict-banner h3{font:900 clamp(31px,4vw,49px) 'Barlow Condensed',sans-serif;line-height:1.06;margin:9px 0;color:#fff1d2;text-wrap:balance}
+.verdict-banner p{font-size:13px;line-height:1.6;color:#cedbe7;max-width:620px;margin:8px auto 0}
+.verdict-podium-wrap{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:end;padding-top:18px}
+.verdict-podium{min-width:0;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px 21px;border:1px solid #ffffff32;border-radius:20px 20px 12px 12px;background:linear-gradient(165deg,#2b4054,#18283b);box-shadow:0 8px 22px #02091380}
+.verdict-podium.podium-1{order:2;min-height:265px;transform:translateY(-13px);border:2px solid #ffe1a2;background:linear-gradient(155deg,#64543f,#253748 60%,#162738);box-shadow:0 0 32px #eac77a3f,0 10px 35px #040a16}
+.verdict-podium.podium-2{order:1;min-height:225px}.verdict-podium.podium-3{order:3;min-height:212px}
+.verdict-medal{font-size:35px;line-height:1.1}.verdict-podium .avatar.lg{width:69px!important;height:69px!important;border-radius:16px!important;font-size:35px!important;margin:0}
+.verdict-podium-name{font-size:14px;font-weight:850;color:#fff;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.verdict-performance{color:#cad7de;font-size:11px;font-variant-numeric:tabular-nums}
+.verdict-prize{font:900 32px 'Barlow Condensed',sans-serif;color:#ffe2a2;font-variant-numeric:tabular-nums}
+.verdict-prize small{font:800 10px Inter,sans-serif;letter-spacing:.04em}
+.verdict-table{border:1px solid #749ab15f;border-radius:18px;background:#142637;overflow:hidden;box-shadow:0 13px 30px #02132263}
+.verdict-table-head{padding:16px 18px;border-bottom:1px solid #a8bfcc35;background:#223c51;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.verdict-table-head strong{font:850 16px 'Barlow Condensed',sans-serif;letter-spacing:.09em;color:#fff3d5}
+.verdict-table-head span{font-size:11px;line-height:1.6;color:#d3dfed;text-align:right}
+.verdict-row{display:grid;grid-template-columns:42px 42px minmax(0,1fr) 65px;gap:11px;align-items:center;padding:11px 16px;border-top:1px solid #ffffff12}
+.verdict-row:first-of-type{border-top:0}
+.verdict-row:nth-child(odd){background:#ffffff07}
+.verdict-row.winner{background:#f5d17f13}
+.verdict-row.my-row{box-shadow:inset 3px 0 #80bce5}
+.verdict-row .avatar.sm{width:40px!important;height:40px!important;font-size:23px!important}
+.verdict-rank{font:900 24px 'Barlow Condensed',sans-serif;color:#ffe3ab}
+.verdict-details{display:flex;min-width:0;flex-direction:column;gap:6px}
+.verdict-details strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.verdict-details small{font-size:10px;color:#c1cfdd;font-variant-numeric:tabular-nums}
+.verdict-meter{height:5px;border-radius:20px;background:#071929;overflow:hidden}
+.verdict-meter i{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,#5fb7ba,#f7d590)}
+.verdict-points{font:900 26px 'Barlow Condensed',sans-serif;color:#ffe5ac;text-align:right;font-variant-numeric:tabular-nums}
+.verdict-points small{display:block;font:750 10px Inter,sans-serif;color:#abc6d3;letter-spacing:.06em}
+.verdict-next{border:1px solid #83b1d154;border-radius:14px;background:#163249;padding:14px 17px;color:#dce9f0;font-size:13px;line-height:1.6}
+.verdict-main .actions .btn{min-height:55px}
+.verdict-side{min-width:0}
+@media(max-width:1120px){.verdict-layout{grid-template-columns:minmax(0,1fr)}.verdict-side{max-width:800px;width:100%;margin:auto}}
+@media(max-width:600px){.verdict-podium-wrap{gap:6px}.verdict-podium{padding:12px 5px;gap:5px;min-height:195px}.verdict-podium.podium-1{min-height:217px}.verdict-podium.podium-2{min-height:195px}.verdict-podium.podium-3{min-height:187px}.verdict-medal{font-size:25px}.verdict-podium .avatar.lg{width:53px!important;height:53px!important;font-size:27px!important}.verdict-podium-name{font-size:11px}.verdict-prize{font-size:26px}.verdict-prize small{font-size:9px}.verdict-performance{font-size:9px}.verdict-table-head{flex-direction:column;align-items:start}.verdict-table-head span{text-align:left}.verdict-row{grid-template-columns:25px 34px minmax(0,1fr) 44px;gap:7px;padding:10px}.verdict-row .avatar.sm{width:33px!important;height:33px!important;font-size:20px!important}.verdict-rank{font-size:19px}.verdict-points{font-size:21px}.verdict-details strong{font-size:11px}.verdict-details small{font-size:9px}}
