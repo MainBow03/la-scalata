@@ -90,7 +90,7 @@ function mazeGame(g,s,rng){let level=0,points=0,maze=null,held=0,steps=0,started
 }
 
 // FORTEZZA: torretta con corsia attiva, mira, cadenza di tiro e nemici multipli.
-function fortressGame(g,s,rng){let selected=1,enemies=[],shots=0,kills=0,spawned=0,gate=7,lastShot=0,frameCount=0;const max=32,intervalMs=90;let tick=0;const started=performance.now();
+function fortressGame(g,s,rng){let selected=1,enemies=[],shots=0,kills=0,spawned=0,gate=7,lastShot=0,frameCount=0;const max=36,intervalMs=90;let tick=0;const started=performance.now();
  displayFrame(g,s,0,3,0,'<div class="v4-description">Controlla la <b>corsia del cannone</b>. Rosso = nemici resistenti. Cerca di non perdere le 7 vite del portone.</div><div class="v4-fortress"><div class="v4-fortress-head">🏰 PORTONE <strong id="v4-gate">❤❤❤❤❤❤❤</strong> <span id="v4-kills">0 eliminati</span></div><div id="v4-enemies" class="v4-enemies"></div></div><div class="v4-controls"><button data-fortress="prev">▲ CORSIA SU</button><button data-fortress="fire" class="v4-fire">💥 SPARA</button><button data-fortress="next">▼ CORSIA GIÙ</button></div><div class="v4-progress-text" id="v4-ammo">Cannone centrale · 0/'+max+' nemici</div>','Spostati con ↑ ↓; premi SPAZIO o SPARA. Ogni colpo ha una breve ricarica.');
  const controls=mount().querySelector('.v4-controls');
  function act(type){if(s.done)return;if(type==='prev')selected=Math.max(0,selected-1);if(type==='next')selected=Math.min(2,selected+1);if(type==='fire')fire();paint()}
@@ -98,8 +98,8 @@ function fortressGame(g,s,rng){let selected=1,enemies=[],shots=0,kills=0,spawned
  const key=e=>{if(!['ArrowUp','ArrowDown',' ','Spacebar'].includes(e.key)||s.done)return;e.preventDefault();act(e.key==='ArrowUp'?'prev':e.key==='ArrowDown'?'next':'fire')};document.addEventListener('keydown',key);
  function fire(){const now=performance.now();if(now-lastShot<410)return;lastShot=now;shots++;const targets=enemies.filter(a=>a.lane===selected).sort((a,b)=>a.distance-b.distance);if(targets.length){targets[0].hp--;if(targets[0].hp<=0){kills++;enemies=enemies.filter(a=>a!==targets[0]);status('🎯 Nemico abbattuto! '+kills+'/'+max)}}}
  function paint(){const box=mount().querySelector('#v4-enemies');if(!box)return;box.innerHTML=Array.from({length:3},(_,lane)=>'<div class="v4-fortress-lane '+(lane===selected?'selected':'')+'"><span class="v4-cannon">'+(lane===selected?'💥':'◈')+'</span>'+enemies.filter(e=>e.lane===lane).map(e=>'<span class="v4-foe" style="left:'+(85-e.distance*9)+'%">'+(e.hp===2?'🛡️':'👾')+'</span>').join('')+'</div>').join('');const g=mount().querySelector('#v4-gate'),k=mount().querySelector('#v4-kills'),a=mount().querySelector('#v4-ammo');if(g)g.textContent='❤'.repeat(gate)+'♡'.repeat(7-gate);if(k)k.textContent=kills+' abbattuti';if(a)a.textContent='Corsia '+(selected+1)+' · Ondata '+Math.min(3,Math.floor(spawned/11)+1)}
- tick=setInterval(()=>{if(s.done)return;frameCount++;if(spawned<max&&frameCount%11===0){spawned++;enemies.push({lane:randomInt(rng,0,2),distance:8.4,hp:spawned%5===0?2:1})}
-  for(const e of enemies)e.distance-=.18+(spawned>18?.03:0);const reached=enemies.filter(e=>e.distance<=0);if(reached.length){gate=Math.max(0,gate-reached.length);enemies=enemies.filter(e=>e.distance>0)}
+ tick=setInterval(()=>{if(s.done)return;frameCount++;if(spawned<max&&frameCount%15===0){spawned++;enemies.push({lane:randomInt(rng,0,2),distance:8.4,hp:spawned%5===0?2:1})}
+  for(const e of enemies)e.distance-=.16+(spawned>22?.03:0);const reached=enemies.filter(e=>e.distance<=0);if(reached.length){gate=Math.max(0,gate-reached.length);enemies=enemies.filter(e=>e.distance>0)}
   s.raw=cap((kills/max*.79+gate/7*.21)*100);value(s.raw);paint();if(gate<=0||spawned===max&&enemies.length===0||performance.now()-started>77000)done(s,s.raw,'Assedio concluso · '+kills+' difensori eliminati');
  },intervalMs);
  onCleanup(s,()=>{clearInterval(tick);document.removeEventListener('keydown',key)});paint();
@@ -120,15 +120,15 @@ function mosaicGame(g,s,rng){let level=0,points=0,board=[],moves=0,started=0,loc
 }
 
 // ASCENSORE: scelta di traiettorie con coda e capienza, non scelta multipla.
-function elevatorGame(g,s,rng){let floor=1,car=[],waiting=[],delivered=0,moves=0,elapsed=0,total=19,locked=false,spawned=0;const levels=6,capacity=3,goal=12;let ticker;
+function elevatorGame(g,s,rng){let floor=1,car=[],waiting=[],delivered=0,moves=0,elapsed=0,total=19,locked=false,spawned=0,lastMove=0;const levels=6,capacity=3,goal=12;let ticker;
  function addPassenger(){if(spawned>=total)return;const from=randomInt(rng,1,levels);let to=randomInt(rng,1,levels);if(to===from)to=to===6?1:to+1;waiting.push({from,to,id:spawned});spawned++}
  for(let i=0;i<8;i++)addPassenger();
  displayFrame(g,s,0,goal,0,'<div class="v4-description">Puoi trasportare <b>massimo 3 passeggeri</b>. Fermandoti a un piano fai salire chi aspetta e scendere chi è arrivato.</div><div class="v4-elevator"><div id="v4-floors"></div><div class="v4-car"><span>🛗 PIANO <b id="v4-current">1</b></span><span id="v4-passengers">0/3 a bordo</span></div></div><div class="v4-controls"><button data-elevator="up">▲ SALI</button><button data-elevator="load">🚪 APRI PORTE</button><button data-elevator="down">▼ SCENDI</button></div><div class="v4-progress-text" id="v4-deliveries">0/'+goal+' persone trasportate</div>','I numeri sui passeggeri indicano il piano di destinazione.');
  const controls=mount().querySelector('.v4-controls');controls.addEventListener('click',e=>{const b=e.target.closest('[data-elevator]');if(b)go(b.dataset.elevator)});
  const onKey=e=>{if(!['ArrowUp','ArrowDown','Enter'].includes(e.key)||s.done)return;e.preventDefault();go(e.key==='ArrowUp'?'up':e.key==='ArrowDown'?'down':'load')};document.addEventListener('keydown',onKey);
- function load(){const leaving=car.filter(p=>p.to===floor);delivered+=leaving.length;car=car.filter(p=>p.to!==floor);let ready=waiting.filter(p=>p.from===floor);for(const passenger of ready){if(car.length>=capacity)break;car.push(passenger);waiting=waiting.filter(p=>p!==passenger)}s.raw=cap(delivered/goal*100);value(s.raw);if(leaving.length)status('🎉 Consegnati '+leaving.length+' passeggeri al piano '+floor+'!')}
+ function load(){const leaving=car.filter(p=>p.to===floor);delivered+=leaving.length;car=car.filter(p=>p.to!==floor);let ready=waiting.filter(p=>p.from===floor);for(const passenger of ready){if(car.length>=capacity)break;car.push(passenger);waiting=waiting.filter(p=>p!==passenger)}s.raw=cap(delivered/goal*85+(delivered>0?Math.max(0,15-moves*.45-elapsed*.13):0));value(s.raw);if(leaving.length)status('🎉 Consegnati '+leaving.length+' passeggeri al piano '+floor+'!')}
  function paint(){const box=mount().querySelector('#v4-floors');if(!box)return;box.innerHTML=Array.from({length:levels},(_,i)=>{const n=levels-i,queue=waiting.filter(p=>p.from===n).map(p=>'<span class="v4-passenger" title="Vuole il piano '+p.to+'">→'+p.to+'</span>').join('');return '<div class="v4-floor '+(n===floor?'active':'')+'"><b>'+n+'°</b><span class="v4-floor-queue">'+(queue||'—')+'</span><span class="v4-floor-shaft">'+(n===floor?'🛗':'│')+'</span></div>'}).join('');const current=mount().querySelector('#v4-current'),ps=mount().querySelector('#v4-passengers'),count=mount().querySelector('#v4-deliveries');if(current)current.textContent=String(floor);if(ps)ps.textContent=car.length+'/3 · destinazioni: '+(car.map(p=>p.to).join(', ')||'nessuna');if(count)count.textContent=delivered+'/'+goal+' persone trasportate · '+moves+' fermate'}
- function go(act){if(s.done||locked)return;if(act==='up'&&floor<6){floor++;moves++}else if(act==='down'&&floor>1){floor--;moves++}else if(act!=='load')return;load();paint();if(delivered>=goal)done(s,s.raw,'Ascensore efficiente! '+delivered+' consegne.');}
+ function go(act){if(s.done||locked)return;const now=performance.now();if(now-lastMove<330)return;if(act==='up'&&floor<6){floor++;moves++;lastMove=now}else if(act==='down'&&floor>1){floor--;moves++;lastMove=now}else if(act!=='load')return;load();paint();if(delivered>=goal)done(s,s.raw,'Ascensore efficiente! '+delivered+' consegne.');}
  load();paint();ticker=setInterval(()=>{if(s.done)return;elapsed++;if(elapsed%5===0){addPassenger();paint()}if(elapsed>=87)done(s,s.raw,'Viaggio terminato · '+delivered+' consegne')},1000);
  onCleanup(s,()=>{clearInterval(ticker);document.removeEventListener('keydown',onKey)})
 }
@@ -213,7 +213,7 @@ rawForBot=function(player,g,room){if(g?.version!==4)return previousBot(player,g,
  let score=0;
  if(g.id==='railcraft'){for(let i=0;i<4;i++)if(rnd()<.30+skill*.67)score+=12+Math.round(skill*12)}
  else if(g.id==='maze'){for(let i=0;i<2;i++)score+=rnd()<skill?28+20*skill:Math.round(skill*11)}
- else if(g.id==='fortress'){let killed=0;for(let i=0;i<32;i++)if(rnd()<.23+skill*.69)killed++;score=killed/32*79+(4+Math.floor(skill*3))/7*21}
+ else if(g.id==='fortress'){let killed=0;for(let i=0;i<36;i++)if(rnd()<.23+skill*.69)killed++;score=killed/36*79+(4+Math.floor(skill*3))/7*21}
  else if(g.id==='mosaic'){for(let i=0;i<3;i++)if(rnd()<.20+skill*.7)score+=21+Math.round(skill*14)}
  else if(g.id==='elevator'){let delivered=0;for(let i=0;i<12;i++)if(rnd()<.26+skill*.7)delivered++;score=delivered/12*100}
  else if(g.id==='runner'){let dodge=0;for(let i=0;i<32;i++)if(rnd()<.23+skill*.72)dodge++;score=dodge/32*85+skill*15}
