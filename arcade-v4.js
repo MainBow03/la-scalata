@@ -175,8 +175,9 @@ function breakoutGame(g,s,rng){const W=480,H=300;let paddle=240,x=235,y=220,vx=2
 // CATALOGO: mostra solo giochi selezionabili nelle nuove partite; classici di archivio separati.
 const categories=[['all','Tutti'],['quick','Riflessi & Arcade'],['clever','Logica'],['strategy','Strategia']];
 let chosenCategory='all',search='',expanded=null;
-const activeGames=()=>games.filter(g=>g.reborn||g.version===4);
-const archivedGames=()=>games.filter(g=>!g.reborn&&g.version!==4);
+const RETAINED=new Set(['garden','clockwork','market','dive','meteor','guardians','heartbeat','echo','cipher']);
+const activeGames=()=>games.filter(g=>g.version===4||RETAINED.has(g.id));
+const archivedGames=()=>games.filter(g=>g.version!==4&&!RETAINED.has(g.id));
 function catalogHtml(){const all=activeGames();const shown=all.filter(g=>(chosenCategory==='all'||g.kind===chosenCategory)&&[g.name,g.desc,g.how,g.mechanic].join(' ').toLowerCase().includes(search.toLowerCase()));
  const card=g=>'<button type="button" class="v4-catalog-card '+(g.id===expanded?'selected':'')+'" data-catalog-game="'+g.id+'"><span class="v4-game-symbol">'+g.symbol+'</span><span class="v4-game-meta">'+(g.version===4?'NUOVA MECCANICA':'ARCADE')+' · '+Math.round(g.duration)+' SEC</span><strong>'+escapeHTML(g.name)+'</strong><small>'+escapeHTML(g.desc)+'</small><span class="v4-game-more">'+(expanded===g.id?'▲ NASCONDI REGOLE':'＋ VEDI REGOLE')+'</span>'+(expanded===g.id?'<span class="v4-game-rules">🎯 '+escapeHTML(g.how)+'<br>🎮 '+escapeHTML(g.mechanic||({quick:'Riflessi',clever:'Logica',strategy:'Strategia'}[g.kind]||'Sfida'))+'</span>':'')+'</button>';
  return '<main class="v4-catalog-page"><header class="v4-catalog-heading"><div><p class="eyebrow">✦ LA SCALATA · SALA DEI GIOCHI</p><h1 class="section-title">IL CATALOGO DEI MINIGIOCHI</h1><p class="lead">Esplora le prove, scopri le regole e preparati alla corsa verso il trono.</p></div><button class="btn btn-ghost" data-catalog="back">← TORNA AL MENU</button></header><section class="v4-catalog-stats"><span>🎮 <b>'+all.length+'</b> MINIGIOCHI NELLA ROTAZIONE</span><span>🧩 <b>'+ADDITIONS.length+'</b> NUOVE MECCANICHE</span><span>👑 PREMI DAL 1° ALL’ULTIMO</span></section><div class="v4-catalog-tools"><div class="v4-catalog-filters">'+categories.map(([id,label])=>'<button class="v4-filter '+(chosenCategory===id?'current':'')+'" data-catalog-category="'+id+'">'+label+'</button>').join('')+'</div><input id="v4-catalog-search" type="search" placeholder="🔎 Cerca un minigioco..." value="'+escapeHTML(search)+'" aria-label="Cerca un minigioco"></div><div id="v4-catalog-list"><div class="v4-catalog-grid">'+shown.map(card).join('')+'</div>'+(shown.length?'':'<p class="v4-no-results">Nessun minigioco trovato. Prova un altro nome o categoria.</p>')+'</div><details class="v4-archive"><summary>📦 Archivio dei '+archivedGames().length+' minigiochi classici (non estratti nelle nuove partite)</summary><div class="v4-archive-list">'+archivedGames().map(g=>'<span>'+g.symbol+' '+escapeHTML(g.name)+'</span>').join('')+'</div></details></main>';
@@ -195,8 +196,19 @@ app.addEventListener('click',e=>{const catalog=e.target.closest('[data-catalog],
 app.addEventListener('input',e=>{if(e.target.id==='v4-catalog-search'){search=e.target.value;redrawCatalog(true)}},true);
 
 // Compatibilità con l'attuale sistema stanza/Firestore.
-chooseMini=function(room,forced){if(forced)return previousChoose(room,forced);let arr=activeGames().filter(g=>g.id!==room.lastMiniId);const rng=hashRandom(room.code+'|'+room.turn+'|choose-v4');const fresh=arr.filter(g=>g.version===4);
- if(fresh.length&&rng()<.65)arr=fresh;return arr[randomInt(rng,0,arr.length-1)].id};
+function selectionCycle(room,cycle){
+ const rng=hashRandom(room.code+'|v4-cycle|'+cycle),a=ADDITIONS.map(g=>g.id),old=games.filter(g=>RETAINED.has(g.id)).map(g=>g.id);
+ function shuffle(xs){for(let i=xs.length-1;i>0;i--){const j=randomInt(rng,0,i),v=xs[i];xs[i]=xs[j];xs[j]=v}return xs}
+ const list=shuffle([...shuffle(a),...shuffle(old).slice(0,5)]);
+ if(cycle>0){const prev=selectionCycleUnadjusted(room,cycle-1);if(list[0]===prev[prev.length-1]){const v=list[0];list[0]=list[1];list[1]=v;}}
+ return list;
+}
+function selectionCycleUnadjusted(room,cycle){
+ const rng=hashRandom(room.code+'|v4-cycle|'+cycle),fresh=ADDITIONS.map(g=>g.id),old=games.filter(g=>RETAINED.has(g.id)).map(g=>g.id);
+ function shuffle(xs){for(let i=xs.length-1;i>0;i--){const j=randomInt(rng,0,i),v=xs[i];xs[i]=xs[j];xs[j]=v}return xs}
+ return shuffle([...shuffle(fresh),...shuffle(old).slice(0,5)]);
+}
+chooseMini=function(room,forced){if(forced)return previousChoose(room,forced);const round=Math.max(0,room.round||0),cycle=Math.floor(round/12),order=selectionCycle(room,cycle);return order[round%12]};
 rawForBot=function(player,g,room){if(g?.version!==4)return previousBot(player,g,room);const rnd=botRandom(player,g,room),skill=clamp(({easy:.38,normal:.63,hard:.84}[room.difficulty]||.63)+(character(player.avatar).trait===g.kind?.10:0),.22,.96);
  let score=0;
  if(g.id==='railcraft'){for(let i=0;i<4;i++)if(rnd()<.30+skill*.67)score+=12+Math.round(skill*12)}
