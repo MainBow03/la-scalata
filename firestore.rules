@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function roomRef(code) { return /databases/$(database)/documents/rooms/$(code); }
+    function room(code) { return get(roomRef(code)); }
+    function isHost() { return signedIn() && resource.data.hostUid == request.auth.uid; }
+    function newHuman(p) {
+      return p.keys().hasOnly(['uid','name','avatar','bot','alive','score','total','wins','eliminatedAt'])
+        && p.uid == request.auth.uid
+        && p.name is string && p.name.size() >= 1 && p.name.size() <= 20
+        && p.avatar is int && p.avatar >= 0 && p.avatar < 28
+        && p.bot == false && p.alive == true
+        && p.score == 0 && p.total == 0 && p.wins == 0 && p.eliminatedAt == 0;
+    }
+    function validJoin() {
+      return signedIn()
+        && resource.data.phase == 'lobby'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['players','updatedAt'])
+        && resource.data.players.size() < 12
+        && request.resource.data.players.size() == resource.data.players.size() + 1
+        && request.resource.data.players.hasAll(resource.data.players)
+        && newHuman(request.resource.data.players[resource.data.players.size()]);
+    }
+    match /rooms/{code} {
+      allow get: if signedIn();
+      allow list: if false;
+      allow create: if signedIn()
+        && code.matches('^[A-HJ-NP-Z2-9]{6}$')
+        && request.resource.data.hostUid == request.auth.uid
+        && request.resource.data.phase == 'lobby'
+        && request.resource.data.players is list
+        && request.resource.data.players.size() == 1
+        && newHuman(request.resource.data.players[0]);
+      allow update: if isHost() || validJoin();
+      allow delete: if false;
+      match /submissions/{submissionId} {
+        allow read: if signedIn() && exists(roomRef(code));
+        allow create: if signedIn()
+          && exists(roomRef(code))
+          && request.resource.data.keys().hasOnly(['uid','turn','miniId','raw','detail','submittedAt'])
+          && submissionId == (string(request.resource.data.turn) + '_' + request.auth.uid)
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.turn is int
+          && request.resource.data.raw is number
+          && request.resource.data.raw >= 0 && request.resource.data.raw <= 100
+          && request.resource.data.miniId is string
+          && request.resource.data.detail is string && request.resource.data.detail.size() <= 160
+          && room(code).data.phase == 'playing'
+          && room(code).data.turn == request.resource.data.turn
+          && room(code).data.miniId == request.resource.data.miniId;
+        allow update, delete: if false;
+      }
+    }
+  }
+}
