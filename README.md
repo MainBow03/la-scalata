@@ -1,3 +1,25 @@
+## Versione 0.6 — Missioni competitive (qualità prima della quantità)
+
+Questo aggiornamento risolve il problema delle mini-prove poco sviluppate e del punteggio universale **/100**.
+
+**Nuova rotazione:** cinque modalità curate e diverse, invece delle 16+ prove molto simili. Le vecchie 36 prove rimangono nell'archivio del catalogo per compatibilità con stanze già iniziate; **non vengono estratte nelle nuove partite**.
+
+| Missione | Regola di classifica | Meccanica |
+|---|---|---|
+| Fuga sui Tetti · Definitiva | Metri percorsi | Salto fisico, scivolata, ostacoli crescenti, 3 cuori, controlli touch/tastiera |
+| Assedio della Fortezza | Nemici fermati (parità: difese rimaste) | Tre corsie, mira, proiettili in movimento, corazzati e ondate |
+| Cristalli del Firmamento | Cristalli distrutti (parità: vite) | Rompimattoni su canvas, collisioni, riflessi, controllo racchetta |
+| Treno del Labirinto | Rotte ferroviarie completate (parità: tempo rimasto) | Ruota binari, verifica il percorso, 3 mappe garantite risolvibili |
+| Ascensore Reale | Passeggeri consegnati (parità: tempo rimasto) | 6 piani, 3 posti, corse e richieste passeggeri |
+
+Il punteggio interno di confronto ora è una **prestazione naturale** (per esempio 864 m, 21 nemici, 17 cristalli); alcuni giochi conservano una componente secondaria nel dato numerico per spezzare le parità, ma **non esiste una soglia obbligatoria di 100**. La classifica premia i risultati dal più alto al più basso e converte il piazzamento in punti Scalata: **8 concorrenti → 14, 11, 9, 7, 5, 4, 3, 1**.
+
+Per attivare l'online aggiorna anche le regole Firestore: `raw` può ora contenere numeri fino a 100000, non più soltanto 0–100.
+
+**Verifiche svolte:** sintassi dei tre script e avvio logico delle cinque missioni; 220 mappe di binari controllate con una rotta valida; 120 stagioni simulate fino all'incoronazione. Non sono ancora test reali di giocabilità con mouse/touch o di rete tra due dispositivi.
+
+---
+
 # 👑 LA SCALATA
 Party game a eliminazione per 4–12 concorrenti, con minigiochi, NPC, grafica scenografica, modalità locale e stanze multiplayer Firebase.
 
