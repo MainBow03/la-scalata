@@ -216,7 +216,36 @@ function scoreboard(room,extra=''){const players=[...room.players].sort((a,b)=>(
 function lobby(){const r=state.room,remaining=12-r.players.length;return `${roomHeader()}<div class="game-layout"><div>${stepMarkup(r)}<div class="feed">💬 ${randomBanter(r.players)} — La sfida sta per iniziare!</div></div><div><div class="card card-padded"><p class="lobby-label">${state.online?'Codice per invitare amici':'Partita di prova'}</p>${state.online?`<div class="lobby-code">${esc(r.code)}</div><div><button class="btn btn-sm btn-ghost" data-action="copy-room">📋 COPIA INVITO</button></div>`:`<div class="lobby-code">LOCALE</div>`}<div class="divider"></div><div class="card-heading"><h3>Partecipanti</h3><span class="pill">${r.players.length}/12</span></div><div class="score-list">${r.players.map(p=>`<div class="score-item"><span>✦</span>${charAvatar(p,'sm')}<div><div class="score-name">${esc(p.name)}</div><div class="score-sub">${p.bot?'NPC · '+esc(character(p.avatar).trait):p.uid===r.hostUid?'👑 HOST':'GIOCATORE'}</div></div><span class="pill">PRONTO</span></div>`).join('')}</div>${isHost()?`<div class="host-actions"><button class="btn btn-gold" data-action="start-match" ${r.players.length+(state.online?r.npcToAdd:0)<4?'disabled':''}>▶ INIZIA LA SCALATA</button>${remaining>0?'<button class="btn btn-ghost btn-sm" data-action="add-bot">+ NPC</button>':''}</div>`:`<div class="feed">In attesa che l'host inizi la partita...</div>`}<p class="small-note">${state.online?'I tuoi amici possono entrare con questo codice prima dell’inizio.':'Puoi giocare subito contro gli NPC.'}</p></div></div></div>`;}
 function phasePanelHeader(label,title,desc){return `<div class="phase-top"><div><p class="eyebrow">${label}</p><h2 class="phase-title">${title}</h2><p class="subhead">${desc}</p></div><button class="btn btn-ghost btn-sm" data-action="leave">× ESCI</button></div>`;}
 function gamePage(){const r=state.room,g=games.find(x=>x.id===r.miniId)||games[0],me=myPlayer(),allowed=me?.alive&&eligible().includes(me.uid);return `${phasePanelHeader(r.mode==='tiebreak'?'⚔ SPAREGGIO REALE':`SFIDA ${r.round} · GRADINO ${r.initialCount-alive().length+1}`,g.name,g.desc)}<div class="game-layout"><div><div class="card card-padded"><div class="mini-header"><span class="pill">${g.symbol} ${r.mode==='tiebreak'?'CHI PERDE È FUORI':`MINIGIOCO ${((r.round-1)%r.roundsPerElim)+1}/${r.roundsPerElim}`}</span><div class="clock" id="clock">${g.duration}</div></div>${allowed?'<div id="game-mount" class="mini-panel" style="margin-top:18px"><p>Caricamento sfida...</p></div>':`<div class="finished-panel"><span style="font-size:55px">👁️</span><h3>MODALITÀ SPETTATORE</h3><p class="muted">${!me?.alive?'Sei stato eliminato. Puoi seguire la scalata!':'I concorrenti a rischio si sfidano nello spareggio.'}</p></div>`}${botArena(r,g)}<div class="progress-line"><i style="width:${(r.round%r.roundsPerElim)*100/r.roundsPerElim}%"></i></div></div><div class="feed">💬 ${randomBanter(r.players.filter(p=>p.alive))}</div></div><div>${stepMarkup(r)}</div></div>`;}
-function resultPage(){const r=state.room,o=r.outcome||[];return `${phasePanelHeader('RISULTATI UFFICIALI','IL VERDETTO DEL ROUND',`Minigioco ${r.round}: ${esc(games.find(g=>g.id===r.miniId)?.name||'Sfida')}`)}<div class="game-layout"><div><div class="card card-padded"><div class="card-heading"><h3>📜 Punti ottenuti</h3><span class="pill">${o.length} concorrenti</span></div><div class="result-grid">${o.map((x,i)=>{const p=r.players.find(p=>p.uid===x.uid);return `<div class="result-entry"><span class="score-rank">${i+1}</span>${charAvatar(p)}<div><div class="result-name">${esc(p?.name||'Concorrente')}</div><div class="result-raw">Prestazione: ${x.raw}/100</div></div><span class="points">+${x.points}</span></div>`}).join('')}</div>${isHost()?`<div class="actions"><button class="btn btn-gold" data-action="next-phase">${r.round%r.roundsPerElim===0?'☠ CERIMONIA DI ELIMINAZIONE':'▲ PROSSIMO MINIGIOCO'}</button></div>`:`<div class="feed">In attesa che l'host prosegua...</div>`}</div><div class="feed">${r.round%r.roundsPerElim===0?'I punteggi della fase sono completi. L’ultimo rischia di uscire!':'C’è ancora tempo per recuperare prima dell’eliminazione.'}</div></div><div>${scoreboard(r)}</div></div>`;}
+function resultPage(){
+ const r=state.room, o=r.outcome||[], title=games.find(g=>g.id===r.miniId)?.name||'Sfida',
+       prizes=rankPrizes(o.length),maxRaw=Math.max(1,...o.map(x=>x.raw)),
+       leader=o[0]&&r.players.find(p=>p.uid===o[0].uid);
+ const podium=o.slice(0,3).map((x,i)=>{
+  const p=r.players.find(p=>p.uid===x.uid),medal=['🥇','🥈','🥉'][i];
+  return '<div class="verdict-podium podium-'+(i+1)+'"><div class="verdict-medal">'+medal+'</div>'+charAvatar(p,'lg')
+   +'<div class="verdict-podium-name">'+esc(p?.name||'Concorrente')+'</div><div class="verdict-performance">'+x.raw+'/100 prestazione</div>'
+   +'<div class="verdict-prize">+'+x.points+'<small> PUNTI</small></div></div>';
+ }).join('');
+ const standings=o.map((x,i)=>{
+   const p=r.players.find(p=>p.uid===x.uid),width=Math.round(x.raw/maxRaw*100);
+   return '<div class="verdict-row '+(i===0?'winner ':'')+(p?.uid===state.uid?'my-row':'')+'">'
+   +'<div class="verdict-rank">'+String(x.rank||i+1).padStart(2,'0')+'</div>'+charAvatar(p,'sm')
+   +'<div class="verdict-details"><strong>'+esc(p?.name||'Concorrente')+(p?.uid===state.uid?' · TU':'')+'</strong>'
+   +'<div class="verdict-meter"><i style="width:'+width+'%"></i></div>'
+   +'<small>Prestazione '+x.raw+'/100 · Totale fase '+(p?.score||0)+'</small></div>'
+   +'<div class="verdict-points">+'+x.points+'<small>pts</small></div></div>';
+ }).join('');
+ return phasePanelHeader('RISULTATI UFFICIALI','CLASSIFICA DEL MINIGIOCO',esc(title)+' · Round '+r.round)
+ +'<div class="verdict-layout"><section class="verdict-main"><div class="verdict-banner"><span>✦ IL VERDETTO DEL TRONO ✦</span><h3>'
+  +(leader?esc(leader.name)+' VINCE LA PROVA!':'PROVA COMPLETATA')+'</h3><p>La prestazione decide l’ordine, non i punti assegnati. Ogni posizione riceve un premio ridotto.</p></div>'
+ +'<div class="verdict-podium-wrap">'+podium+'</div><div class="verdict-table"><div class="verdict-table-head">'
+ +'<strong>CLASSIFICA COMPLETA</strong><span>'+o.length+' concorrenti · Premi: '+prizes.join(' · ')+'</span></div>'
+ +standings+'</div><div class="verdict-next">'
+ +(r.round%r.roundsPerElim===0?'⚠ Ultimo minigioco della fase: chi ha meno punti complessivi rischia l’eliminazione.':'▲ La scalata continua: i punti di questa fase si sommano fino all’eliminazione.')
+ +'</div>'
+ +(isHost()?'<div class="actions"><button class="btn btn-gold" data-action="next-phase">'+(r.round%r.roundsPerElim===0?'☠ CERIMONIA DI ELIMINAZIONE':'▲ PROSSIMO MINIGIOCO')+'</button></div>':'<div class="feed">In attesa che l’host prosegua...</div>')
+ +'</section><aside class="verdict-side">'+scoreboard(r)+'</aside></div>';
+}
 function eliminationPage(){const r=state.room,p=r.players.find(p=>p.uid===r.lastEliminated),others=alive().length;return `${phasePanelHeader('LA CERIMONIA','UN CONCORRENTE CADE',`Restano ${others} giocatori in corsa verso il trono.`)}<div class="game-layout"><div>${stepMarkup(r)}<div class="elimination-banner"><p class="eyebrow">ELIMINATO DAL PALAZZO</p><div>${charAvatar(p,'lg')}</div><strong>${esc(p?.name||'Concorrente')}</strong><p class="subhead">${esc(p?.name||'Un concorrente')} si ferma qui. Gli altri salgono di un gradino.</p></div>${isHost()?`<button class="btn btn-gold" data-action="next-phase">${others===1?'👑 INCORONA IL VINCITORE':'▲ SALI AL PROSSIMO GRADINO'}</button>`:`<div class="feed">In attesa dell'host...</div>`}</div><div>${scoreboard(r)}</div></div>`;}
 function championPage(){const r=state.room,champion=alive()[0],ranking=[...r.players].sort((a,b)=>(a.alive===b.alive)?(b.total-a.total):(b.alive-a.alive));return `${phasePanelHeader('IL GRAN FINALE','ABBIAMO UN SOVRANO','Il trono ha finalmente scelto il suo campione.') }<div class="game-layout"><div><div class="champion-block"><div class="champion-crown">👑</div>${charAvatar(champion,'lg')}<h2>${esc(champion?.name||'Campione')}</h2><p class="eyebrow">RE DELLA SCALATA</p><p class="subhead">Ha superato tutte le eliminazioni e conquistato la vetta!</p></div><div style="margin-top:18px">${stepMarkup(r)}</div><div class="actions"><button class="btn btn-gold" data-action="leave">↺ NUOVA PARTITA</button></div></div><div>${scoreboard(r,'<div class="feed">Classifica finale basata sui punti cumulativi. Il vincitore è l’ultimo superstite.</div>')}</div></div>`;}
 function randomBanter(ps){const bots=ps.filter(p=>p.bot);const p=bots.length?bots[(state.room?.turn||0)%bots.length]:ps[0];if(!p)return 'Che vinca il migliore!';const c=character(p.avatar),lines=dialog[c.trait]||dialog.chaos;return `${esc(p.name)}: «${esc(lines[(state.room?.turn||0)%lines.length])}»`;}
@@ -288,7 +317,24 @@ function botArena(r,g){
  bots.map(p=>'<div class="bot-runner">'+charAvatar(p,'sm')+'<div class="bot-runner-main"><span>'+esc(p.name)+'</span><div class="bot-runner-track"><i data-bot-meter="'+esc(p.uid)+'" data-final="'+rawForBot(p,g,r)+'" style="width:0%"></i></div></div><b data-bot-value="'+esc(p.uid)+'">0</b></div>').join('')+'</div>';
 }
 
-function outcomeForRoom(r,submitted){const ps=r.mode==='tiebreak'?r.players.filter(p=>p.alive&&r.eligible.includes(p.uid)):r.players.filter(p=>p.alive);const g=games.find(g=>g.id===r.miniId);const data=ps.map(p=>{let raw=p.bot?rawForBot(p,g,r):Number(submitted[p.uid]??0);return {uid:p.uid,raw:clamp(Math.round(raw),0,100)}}).sort((a,b)=>b.raw-a.raw);return data.map(x=>{let rank=data.findIndex(y=>y.raw===x.raw);return {...x,points:r.mode==='tiebreak'?0:Math.max(20,100-rank*10)}});}
+// Premi per posizione nella singola prova: 14 punti massimo, 1 punto minimo.
+const PRIZES_BY_COUNT={
+ 2:[14,1],3:[14,7,1],4:[14,9,5,1],5:[14,10,7,4,1],
+ 6:[14,11,8,6,4,1],7:[14,11,9,7,5,3,1],
+ 8:[14,11,9,7,5,4,3,1],
+ 9:[14,12,10,8,7,5,4,3,1],10:[14,12,10,9,8,7,6,4,3,1],
+ 11:[14,12,11,10,9,8,7,6,5,3,1],
+ 12:[14,12,11,10,9,8,7,6,5,4,3,1]
+};
+function rankPrizes(count){return PRIZES_BY_COUNT[count]||PRIZES_BY_COUNT[8]}
+function outcomeForRoom(r,submitted){
+ const ps=r.mode==='tiebreak'?r.players.filter(p=>p.alive&&r.eligible.includes(p.uid)):r.players.filter(p=>p.alive);
+ const g=games.find(g=>g.id===r.miniId);
+ const data=ps.map(p=>({uid:p.uid,raw:clamp(Math.round(p.bot?rawForBot(p,g,r):Number(submitted[p.uid]??0)),0,100)}))
+   .sort((a,b)=>b.raw-a.raw||a.uid.localeCompare(b.uid));
+ const prizes=rankPrizes(data.length);
+ return data.map((x,i)=>{const rank=data.findIndex(y=>y.raw===x.raw);return {...x,rank:rank+1,points:r.mode==='tiebreak'?0:prizes[rank]};});
+}
 function resolveRound(r,submitted){const outcome=outcomeForRoom(r,submitted);let updated={...r,players:r.players.map(p=>({...p})),outcome,updatedAt:Date.now()};if(r.mode==='tiebreak'){
   // Exact ties are resolved by a deterministic, host-selected final order for the prototype.
   const reverse=[...outcome].sort((a,b)=>a.raw-b.raw||a.uid.localeCompare(b.uid));
