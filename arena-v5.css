@@ -1,0 +1,53 @@
+/* LA SCALATA — Missioni competitive v5.0 */
+.v5-intro,.v5-game{font-family:Inter,system-ui,sans-serif}
+.v5-intro{max-width:710px;margin:4px auto;padding:clamp(19px,4vw,43px);text-align:center;border-radius:23px;border:1px solid #719fc85b;background:radial-gradient(ellipse at 50% 0%,#2f657375,transparent 65%),linear-gradient(155deg,#162c45,#0a1b30);box-shadow:inset 0 1px #ffffff20,0 16px 44px #00101e8f}
+.v5-overline{display:block;font-size:11px;font-weight:900;letter-spacing:.27em;color:#f8daa1;margin-bottom:13px}
+.v5-intro-art{font-size:clamp(62px,11vw,116px);line-height:1.2;filter:drop-shadow(0 0 30px #ffe3ac66);margin:4px auto 13px}
+.v5-intro h3{font:900 clamp(32px,4vw,52px) 'Barlow Condensed',Impact,sans-serif;letter-spacing:.02em;margin:8px auto;color:#fff2d0}
+.v5-intro p{max-width:600px;margin:12px auto 19px;line-height:1.8;color:#d6e6ef;font-size:14px}
+.v5-intro-cards{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:17px auto 23px}
+.v5-intro-cards span{border-radius:9px;border:1px solid #9abfba80;padding:11px 13px;color:#e9f8f9;background:#1d4054;font-size:12px;font-weight:700}
+.v5-primary{display:block;margin:12px auto;width:min(100%,380px);min-height:60px;padding:12px 18px;background:linear-gradient(130deg,#fff0c0,#f2be6b);border:2px solid #f9dfac;border-radius:12px;box-shadow:0 5px 0 #8e6339,0 13px 28px #0009;color:#22273c;font:900 22px 'Barlow Condensed',Impact,sans-serif;letter-spacing:.05em;transition:transform .14s,box-shadow .14s;cursor:pointer}
+.v5-primary:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 7px 0 #8e6339,0 18px 30px #0009}
+.v5-intro small{display:block;margin-top:18px;font-size:11px;color:#adbfd0}
+.v5-scorebar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:0 0 16px;padding:15px 19px;background:linear-gradient(115deg,#123548,#234b5a);border:1px solid #7dc8d369;border-radius:16px;box-shadow:inset 0 1px #ffffff15}
+.v5-scorebar>div:first-child{display:flex;flex-direction:column;gap:3px;min-width:0}
+.v5-label{font-size:11px;letter-spacing:.11em;font-weight:900;color:#a7dddb}
+#v5-score{font:900 clamp(28px,4vw,41px) 'Barlow Condensed',sans-serif;color:#ffebb7;white-space:nowrap;font-variant-numeric:tabular-nums}
+.v5-infotag{font-weight:700;font-size:11px;line-height:1.5;color:#c9e1eb;max-width:45%;text-align:right}
+.v5-game{border:1px solid #83aec25c;border-radius:17px;background:#10263b;padding:clamp(8px,2vw,16px);box-shadow:inset 0 0 25px #020d206c}
+.v5-message{border:1px solid #8eb3bb4b;border-radius:12px;margin:13px 0 0;padding:11px 13px;min-height:45px;background:#214257;color:#d7edfa;font-size:12px;font-weight:750;line-height:1.6}
+.v5-message.v5-positive{border-color:#7ee0aa82;color:#bbffd5;background:#1a5147}
+.v5-message.v5-negative{border-color:#ff968d87;color:#ffb9a9;background:#583241}
+.v5-canvas{width:100%;height:auto;max-height:500px;aspect-ratio:auto;display:block;touch-action:none;border-radius:13px;background:#09223d;box-shadow:0 5px 15px #0007;image-rendering:auto}
+.v5-controls{display:flex;gap:10px;justify-content:center;margin:14px 0 2px}
+.v5-controls>button{flex:1;max-width:280px;min-height:60px;border-radius:11px;border:1px solid #8ed0d7;background:linear-gradient(135deg,#285569,#193c55);color:#f3f7fc;font:900 21px 'Barlow Condensed',sans-serif;letter-spacing:.05em;box-shadow:0 4px 0 #09283e;touch-action:manipulation}
+.v5-controls>button:active{transform:translateY(3px);box-shadow:0 1px 0 #09283e;background:#396c7c}
+.v5-controls-three>button:nth-child(2){background:linear-gradient(130deg,#e9b96e,#ed8b70);color:#2b2435;border-color:#ffe0ad}
+.v5-railway-shell{max-width:700px;margin:auto;text-align:center}
+.v5-rail-head{display:flex;gap:10px;justify-content:space-between;align-items:center;padding:13px 16px;color:#d2e9f2}
+.v5-rail-head b{font:900 20px 'Barlow Condensed',sans-serif;color:#f4d89d}
+.v5-rail-head span{font-size:11px;color:#b8d8e5}
+.v5-track{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;padding:10px;background:radial-gradient(circle,#1d5a60,#193447);border:6px ridge #c7a178;border-radius:13px;box-shadow:inset 0 0 23px #00121c}
+.v5-track-tile{aspect-ratio:1;display:grid;place-items:center;padding:0;border:2px solid #557887;border-radius:7px;color:#c4f0f6;background:linear-gradient(#38536a,#1a384a);font:900 clamp(20px,5vw,46px) monospace;line-height:1.2;transition:transform .12s,background .12s}
+.v5-track-tile.useful{background:linear-gradient(#40657c,#284960)}
+.v5-track-tile:not(:disabled):hover{transform:scale(1.05);background:#567d89}
+.v5-track-tile:disabled{color:#ffedbb;background:linear-gradient(#6a654b,#4d493b);border-color:#ffdd9c}
+.v5-track-tile.correct{background:linear-gradient(#437d6f,#234d54);color:#fff3bd;border-color:#a3e5ae;box-shadow:0 0 16px #71deab77}
+.v5-lift-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;font:900 16px 'Barlow Condensed',sans-serif;color:#ffe5ab;padding:10px}
+.v5-lift-header span{border:1px solid #9dc9cc66;border-radius:10px;background:#214252;padding:8px 13px}
+.v5-lift-building{border:5px ridge #a7a6a1;border-radius:15px;overflow:hidden;background:#193b49;max-width:650px;margin:auto}
+.v5-floor{border:0;border-bottom:2px solid #304f64;min-height:66px;display:grid;grid-template-columns:46px 118px minmax(0,1fr) 60px;gap:8px;align-items:center;width:100%;color:#e1f1ed;text-align:left;background:linear-gradient(120deg,#18344c,#244e58);padding:4px 10px}
+.v5-floor:nth-child(odd){background:linear-gradient(120deg,#183a4a,#224251)}
+.v5-floor.here{background:linear-gradient(120deg,#4e5f5b,#2d665b);box-shadow:inset 5px 0 #ffe2a0}
+.v5-floor.selected{box-shadow:inset 0 0 0 3px #9ce6e8}
+.v5-floor strong{font:900 24px 'Barlow Condensed',sans-serif;color:#ffe5a6}
+.v5-lift-cab{font-size:15px;white-space:nowrap;color:#ffe4a9;font-weight:850}
+.v5-empty-cab{color:#7fa6aa;text-align:center}
+.v5-passengers{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.v5-passengers b{background:#0c2434;border:1px solid #89a9c262;padding:5px;font-size:11px;color:#deeeec;border-radius:7px;white-space:nowrap}
+.v5-passengers i{font-size:10px;font-weight:400;color:#a8c6d0}
+.v5-go{font-weight:900;text-align:right;font-size:11px;color:#add9d9}
+.v5-lift-note{font-size:12px;text-align:center;color:#d5e7e9;line-height:1.5;padding:14px}
+@media(max-width:650px){.v5-controls button{font-size:16px;min-height:56px}.v5-scorebar{padding:11px}.v5-infotag{font-size:9px}.v5-track{gap:3px;padding:5px;border-width:3px}.v5-track-tile{font-size:clamp(21px,7vw,34px);border-width:1px}.v5-floor{grid-template-columns:33px 80px minmax(0,1fr) 43px;padding:4px;gap:5px;min-height:59px}.v5-floor strong{font-size:19px}.v5-lift-cab{font-size:11px}.v5-go{font-size:9px}.v5-intro p{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.v5-track-tile,.v5-primary{transition:none!important}}
