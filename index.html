@@ -139,6 +139,8 @@ const games=[
 ];
 const dialog={quick:['Io parto subito!','Non mi prenderete mai!','Questo round è mio!'],clever:['Ho già un piano.','Osserviamo bene...','Concentrazione assoluta.'],luck:['Mi affido alla fortuna!','Sento che è la volta buona.','È tutto sotto controllo... forse.'],chaos:['SI PARTEEEE!','Questa partita sarà un delirio.','Non ho idea di cosa sto facendo!']};
 const state={view:'home',setupMode:'local',name:'',character:0,npc:5,roundsPerElim:2,difficulty:'normal',room:null,online:false,uid:'offline',fb:null,roomUnsub:null,hostWatch:null,watchTurn:0,mini:null,renderKey:'',hostBusy:false,toastTimeout:null};
+const lastRoomCode=()=>{try{return localStorage.getItem('la_scalata_last_room')||''}catch(e){return ''}};
+const rememberRoom=code=>{try{localStorage.setItem('la_scalata_last_room',code)}catch(e){}};
 const myPlayer=()=>state.room?.players.find(p=>p.uid===state.uid);
 const isHost=()=>!state.online||state.room?.hostUid===state.uid;
 const alive=()=>state.room?.players.filter(p=>p.alive)||[];
@@ -206,7 +208,7 @@ function stepMarkup(room,preview=false){
  }
  return `<div class="throne-room"><div class="arch"></div><span class="spark one">✦</span><span class="spark two">✧</span><span class="spark three">✦</span><div class="throne-top"><span class="crown-art">♛</span><div class="throne-seat">${champion?'👑':'✦'}</div><div class="throne-caption">IL TRONO</div></div><div class="stair-wrap">${rows}</div></div>`;
 }
-function home(){return `<div class="hero"><section class="hero-copy"><p class="eyebrow">✦ IL NUOVO PARTY GAME ✦</p><h1 class="headline">LA<br><span>SCALATA</span></h1><p class="tagline">UN TRONO. MILLE SFIDE. UN VINCITORE.</p><p class="lead">Vinci minigiochi, accumula punti, scampa alle eliminazioni e sali i gradini del palazzo. Quando gli altri cadono, tu continui a salire.</p><div class="actions"><button class="btn btn-gold" data-action="open-local">⚔ GIOCA CONTRO NPC</button><button class="btn btn-purple" data-action="open-online">♛ CREA STANZA ONLINE</button><button class="btn btn-ghost" data-action="open-join">↗ ENTRA CON CODICE</button></div><p class="small-note">La modalità NPC è pronta da provare. Per le partite online attiva l'accesso anonimo e le regole Firestore indicate nel repository.</p><div class="home-badges"><span class="mini-badge">👑 ELIMINAZIONI A FASI</span><span class="mini-badge">🎮 13 MINIGIOCHI</span><span class="mini-badge">🤖 NPC CON ABILITÀ</span><span class="mini-badge">📱 TABLET & MOBILE</span></div></section><section aria-label="Anteprima della scalinata">${stepMarkup(null,true)}</section></div>`;}
+function home(){return `<div class="hero"><section class="hero-copy"><p class="eyebrow">✦ IL NUOVO PARTY GAME ✦</p><h1 class="headline">LA<br><span>SCALATA</span></h1><p class="tagline">UN TRONO. MILLE SFIDE. UN VINCITORE.</p><p class="lead">Vinci minigiochi, accumula punti, scampa alle eliminazioni e sali i gradini del palazzo. Quando gli altri cadono, tu continui a salire.</p><div class="actions"><button class="btn btn-gold" data-action="open-local">⚔ GIOCA CONTRO NPC</button><button class="btn btn-purple" data-action="open-online">♛ CREA STANZA ONLINE</button><button class="btn btn-ghost" data-action="open-join">↗ ENTRA CON CODICE</button>${lastRoomCode()?'<button class="btn btn-ghost" data-action="resume-room">↺ RIENTRA NELLA STANZA</button>':''}</div><p class="small-note">La modalità NPC è pronta da provare. Per le partite online attiva l'accesso anonimo e le regole Firestore indicate nel repository.</p><div class="home-badges"><span class="mini-badge">👑 ELIMINAZIONI A FASI</span><span class="mini-badge">🎮 13 MINIGIOCHI</span><span class="mini-badge">🤖 NPC CON ABILITÀ</span><span class="mini-badge">📱 TABLET & MOBILE</span></div></section><section aria-label="Anteprima della scalinata">${stepMarkup(null,true)}</section></div>`;}
 function setup(){const online=state.setupMode==='online',join=state.setupMode==='join';return `<div class="phase-top"><div><p class="eyebrow">IL TUO VIAGGIO INIZIA QUI</p><h1 class="section-title">${join?'UNISCITI ALLA SFIDA':online?'CREA LA TUA STANZA':'PREPARA LA SCALATA'}</h1><p class="subhead">Scegli il tuo personaggio. Scegli fra 28 personaggi e guarda i loro ritratti illustrati.</p></div><button class="btn btn-ghost btn-sm" data-action="home">← HOME</button></div><div class="setup-grid"><div class="card card-padded setup-panel"><div class="card-heading"><h3>⚙ Configurazione</h3></div><div class="field"><label for="player-name">Il tuo soprannome</label><input id="player-name" placeholder="Come vuoi chiamarti?" maxlength="20" value="${esc(state.name)}"></div>${join?`<div class="field"><label for="join-code">Codice stanza</label><input id="join-code" placeholder="ABC123" maxlength="6" style="text-transform:uppercase;letter-spacing:.25em"></div>`:`<div class="field-grid"><div class="field"><label for="npc-count">NPC iniziali</label><select id="npc-count">${Array.from({length:9},(_,i)=>i+3).map(n=>`<option value="${n}" ${state.npc===n?'selected':''}>${n} NPC</option>`).join('')}</select></div><div class="field"><label for="rounds-count">Minigiochi per eliminazione</label><select id="rounds-count">${[1,2,3,4].map(n=>`<option value="${n}" ${state.roundsPerElim===n?'selected':''}>${n} ${n===1?'minigioco':'minigiochi'}</option>`).join('')}</select></div></div><div class="field"><label for="difficulty">Abilità NPC</label><select id="difficulty"><option value="easy" ${state.difficulty==='easy'?'selected':''}>Principianti</option><option value="normal" ${state.difficulty==='normal'?'selected':''}>Bilanciati</option><option value="hard" ${state.difficulty==='hard'?'selected':''}>Campioni</option></select></div><p class="setting-hint">Nella modalità online gli amici possono entrare fino all'avvio. Gli NPC vengono aggiunti quando l'host preme Inizia.</p>`}<div class="divider"></div><div class="card-heading"><h3>Personaggio scelto</h3></div><div style="display:flex;align-items:center;gap:13px">${charAvatar({avatar:state.character},'lg')}<div><strong>${esc(character(state.character).name)}</strong><p class="small-note" style="margin:5px 0">${esc(character(state.character).show)}</p></div></div><div class="actions"><button class="btn btn-gold" style="width:100%" data-action="${join?'join-room':online?'create-room':'start-local'}">${join?'↗ ENTRA NELLA STANZA':online?'♛ CREA STANZA':'⚔ COMINCIA LA PARTITA'}</button></div><p class="small-note">${online||join?'Tutti i partecipanti devono aprire il gioco dallo stesso sito.':'La demo locale funziona anche senza Firebase.'}</p></div><div class="card card-padded"><div class="card-heading"><h3>🌍 Roster multiversale</h3><span class="pill">${roster.length} personaggi</span></div><div class="roster">${roster.map(c=>`<button class="char-card ${state.character===c.id?'selected':''}" data-action="character" data-id="${c.id}" aria-label="Scegli ${esc(c.name)}">${state.character===c.id?'<span class="selected-tick">✓</span>':''}${charAvatar({avatar:c.id})}<span class="char-name">${esc(c.name)}</span><span class="char-show">${esc(c.show)}</span></button>`).join('')}</div><p class="small-note">Ritratti illustrativi caricati online; se una fonte non è disponibile compare un PNG OpenMoji di riserva. Le immagini ufficiali non sono incluse nel progetto.</p></div></div>`;}
 function roomHeader(){const r=state.room;return `<div class="phase-top"><div><p class="eyebrow">${state.online?'LOBBY ONLINE':'SALA DEI CONCORRENTI'}</p><h1 class="section-title">LA PORTA DEL PALAZZO</h1><p class="subhead">${r.players.length} concorrenti · ${r.roundsPerElim} minigiochi prima di ogni eliminazione</p></div><button class="btn btn-ghost btn-sm" data-action="leave">← ESCI</button></div>`;}
 function scoreboard(room,extra=''){const players=[...room.players].sort((a,b)=>(b.alive-a.alive)||(room.phase==='champion'?(b.total-a.total):(b.score-a.score))||(b.total-a.total));const low=Math.min(...players.filter(p=>p.alive).map(p=>p.score));return `<div class="card card-padded"><div class="card-heading"><h3>🏆 Classifica</h3><span class="pill">${alive().length} in gioco</span></div><div class="score-list">${players.map((p,i)=>`<div class="score-item ${p.alive&&p.score===low&&room.phase!=='lobby'?'danger':''} ${!p.alive?'eliminated':''}"><div class="score-rank">${String(i+1).padStart(2,'0')}</div>${charAvatar(p,'sm')}<div style="min-width:0"><div class="score-name">${esc(p.name)} ${p.bot?'🤖':''}${p.uid===state.uid?' · TU':''}</div><div class="score-sub">${p.alive?'Totale: '+p.total:'Eliminato al gradino '+p.eliminatedAt}</div></div><div class="score-point">${p.score}</div></div>`).join('')}</div>${extra}</div>`;}
@@ -245,7 +247,7 @@ function rawForBot(p,g,r){
  if(g.id==='chests')return [20,35,50,65,85,100][Math.floor(random()*6)];
  if(g.id==='bridge'){let safe=0;for(let i=0;i<7;i++)if(chance(.49+skill*.43))safe++;return score(safe/7*100)}
  if(g.id==='laser'){let dodge=0;for(let i=0;i<12;i++)if(chance(.38+skill*.59))dodge++;return score(dodge/12*100)}
- if(g.id==='tower'){let points=0;for(let i=0;i<5;i++){const error=Math.abs(random()-.5)*120*(1-skill);points+=score(100-error*2)}return score(points/5)}
+ if(g.id==='tower'){let points=0;for(let i=0;i<5;i++){const error=Math.abs(random()-.5)*190*(1-skill)+(1-skill)*7;points+=score(100-error*2)}return score(points/5)}
  if(g.id==='rhythm'){let hits=0,errors=0;for(let i=0;i<12;i++){if(chance(.29+skill*.69))hits++;else if(chance(.19))errors++;}return score(hits/12*100-errors*3)}
  if(g.id==='vault'){
    const all=Array.from({length:1000},(_,i)=>String(i).padStart(3,'0'));
@@ -267,14 +269,14 @@ function rawForBot(p,g,r){
    return score(best);
  }
  if(g.id==='memory'){
-   let pairs=0,turns=0;while(pairs<8&&turns<25){turns++;if(chance(.15+skill*.78))pairs++;}
-   return score(pairs*12.5-(turns-pairs)*.85);
+   let pairs=0,turns=0;while(pairs<8&&turns<14){turns++;if(chance(.10+skill*.53))pairs++;}
+   return score(pairs*12.5-(turns-pairs)*1.1);
  }
  if(g.id==='reaction'){if(chance((1-skill)*.1))return 0;const ms=110+(1-skill)*420+random()*90;return score(110-ms/9)}
  if(g.id==='target'){let hits=0,wrong=0;for(let i=0;i<11;i++){if(chance(.35+skill*.62))hits++;else wrong++;}return score(hits*10-wrong*5)}
  if(g.id==='quiz'){let correct=0,errors=0;for(let i=0;i<6;i++){if(chance(skill*.82+.08))correct++;else errors++;}return score(correct*20-errors*5)}
  if(g.id==='sequence'){let right=0;for(let i=0;i<5;i++)if(chance(.20+skill*.77))right++;return score(right*20)}
- if(g.id==='stars'){const error=Math.floor((1-skill)*6*random());return score(100-error*22)}
+ if(g.id==='stars'){const error=Math.floor((1-skill)*10*random()+random()*.8);return score(100-error*22)}
  if(g.id==='colors'){let right=0,wrong=0;for(let i=0;i<8;i++){if(chance(.28+skill*.72))right++;else wrong++;}return score(right*14-wrong*5)}
  return score(30+skill*60+(random()-.5)*20);
 }
@@ -314,13 +316,28 @@ async function hostAdvance(){if(!isHost()||state.hostBusy)return;state.hostBusy=
 function allSubmittedOrExpired(r,docs){const humans=r.players.filter(p=>p.alive&&!p.bot&&(r.mode!=='tiebreak'||r.eligible.includes(p.uid)));const all=humans.every(p=>docs[p.uid]!==undefined);return all||Date.now()>=r.deadline+1500;}
 async function hostCheck(){const r=state.room;if(!state.online||!isHost()||r?.phase!=='playing'||state.hostBusy)return;try{const {getDocs,query,collection,where}=state.fb.fs;const snaps=await getDocs(query(collection(state.fb.db,'rooms',r.code,'submissions'),where('turn','==',r.turn)));if(state.room?.turn!==r.turn||state.room?.phase!=='playing')return;let submissions={};snaps.forEach(s=>{const d=s.data();if(d.uid&&typeof d.raw==='number')submissions[d.uid]=d.raw});if(!allSubmittedOrExpired(r,submissions))return;state.hostBusy=true;const next=resolveRound(r,submissions);await saveRoom(next);state.hostBusy=false;}catch(e){state.hostBusy=false;console.warn('Controllo round:',e)}}
 function hostWatch(){clearInterval(state.hostWatch);if(state.online&&isHost())state.hostWatch=setInterval(hostCheck,1200)}
-async function initFirebase(){if(state.fb)return true;if(!firebaseConfig.apiKey||!firebaseConfig.projectId||!firebaseConfig.appId){showToast('Inserisci prima il tuo firebaseConfig in firebase-config.js per giocare online.');return false}try{
+async function initFirebase(){if(state.fb){state.uid=state.fb.auth.currentUser?.uid||state.uid;return true}if(!firebaseConfig.apiKey||!firebaseConfig.projectId||!firebaseConfig.appId){showToast('Inserisci prima il tuo firebaseConfig in firebase-config.js per giocare online.');return false}try{
 const [appMod,authMod,fs]=await Promise.all([import('https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js'),import('https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js'),import('https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js')]);
 const fbApp=appMod.initializeApp(firebaseConfig);const auth=authMod.getAuth(fbApp);if(typeof auth.authStateReady==='function')await auth.authStateReady();if(!auth.currentUser)await authMod.signInAnonymously(auth);const user=auth.currentUser;if(!user)throw new Error('Autenticazione non riuscita');state.fb={auth,db:fs.getFirestore(fbApp),fs};state.uid=user.uid;return true;
 }catch(e){showToast('Firebase: '+e.message);console.error(e);return false}}
 function codeRoom(){return Array.from({length:6},()=> 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[rand(0,31)]).join('')}
-async function createOnline(){if(!readForm()||!await initFirebase())return;try{const {doc,setDoc,getDoc}=state.fb.fs;let code;for(let i=0;i<7;i++){code=codeRoom();if(!(await getDoc(doc(state.fb.db,'rooms',code))).exists())break;}const r=roomBase(code,state.uid,[player(state.uid,state.name,state.character)]);await setDoc(doc(state.fb.db,'rooms',code),r);state.online=true;state.room=r;state.view='match';subscribeRoom(code);hostWatch();render();}catch(e){showToast('Creazione stanza: '+e.message)}}
-async function joinOnline(){if(!readForm()||!await initFirebase())return;const code=($('#join-code')?.value||'').trim().toUpperCase();if(!/^[A-Z2-9]{6}$/.test(code)){showToast('Inserisci il codice stanza di 6 caratteri.');return}try{const {doc,runTransaction,getDoc}=state.fb.fs;const ref=doc(state.fb.db,'rooms',code);await runTransaction(state.fb.db,async tx=>{const snap=await tx.get(ref);if(!snap.exists())throw new Error('Stanza inesistente');const r=snap.data();if(r.phase!=='lobby')throw new Error('La partita è già iniziata');if(r.players.some(p=>p.uid===state.uid))return;if(r.players.length>=12)throw new Error('Stanza piena');tx.update(ref,{players:[...r.players,player(state.uid,state.name,state.character)],updatedAt:Date.now()})});state.room=(await getDoc(ref)).data();state.online=true;state.view='match';subscribeRoom(code);render();}catch(e){showToast('Ingresso stanza: '+e.message)}}
+async function createOnline(){if(!readForm()||!await initFirebase())return;try{const {doc,setDoc,getDoc}=state.fb.fs;let code;for(let i=0;i<7;i++){code=codeRoom();if(!(await getDoc(doc(state.fb.db,'rooms',code))).exists())break;}const r=roomBase(code,state.uid,[player(state.uid,state.name,state.character)]);await setDoc(doc(state.fb.db,'rooms',code),r);state.online=true;state.room=r;state.view='match';rememberRoom(code);subscribeRoom(code);hostWatch();render();}catch(e){showToast('Creazione stanza: '+e.message)}}
+async function joinOnline(){if(!readForm()||!await initFirebase())return;const code=($('#join-code')?.value||'').trim().toUpperCase();if(!/^[A-Z2-9]{6}$/.test(code)){showToast('Inserisci il codice stanza di 6 caratteri.');return}try{const {doc,runTransaction,getDoc}=state.fb.fs;const ref=doc(state.fb.db,'rooms',code);await runTransaction(state.fb.db,async tx=>{const snap=await tx.get(ref);if(!snap.exists())throw new Error('Stanza inesistente');const r=snap.data();if(r.phase!=='lobby')throw new Error('La partita è già iniziata');if(r.players.some(p=>p.uid===state.uid))return;if(r.players.length>=12)throw new Error('Stanza piena');tx.update(ref,{players:[...r.players,player(state.uid,state.name,state.character)],updatedAt:Date.now()})});state.room=(await getDoc(ref)).data();state.online=true;state.view='match';rememberRoom(code);subscribeRoom(code);render();}catch(e){showToast('Ingresso stanza: '+e.message)}}
+
+async function resumeOnline(){
+ const code=lastRoomCode();
+ if(!code){showToast('Nessuna stanza da recuperare.');return}
+ if(!await initFirebase())return;
+ try{
+   const {doc,getDoc}=state.fb.fs;
+   const snap=await getDoc(doc(state.fb.db,'rooms',code));
+   if(!snap.exists())throw new Error('Questa stanza non esiste più');
+   const r=snap.data();
+   if(!r.players.some(p=>p.uid===state.uid))throw new Error('Non sei un partecipante della stanza');
+   state.online=true;state.room=r;state.view='match';state.renderKey='';subscribeRoom(code);hostWatch();render();
+ }catch(e){showToast('Rientro: '+e.message)}
+}
+
 function subscribeRoom(code){if(state.roomUnsub)state.roomUnsub();const {doc,onSnapshot}=state.fb.fs;state.roomUnsub=onSnapshot(doc(state.fb.db,'rooms',code),snap=>{if(!snap.exists()){showToast('La stanza non esiste più.');cleanupRoom();switchView('home');return}const old=state.room?.turn;state.room=snap.data();if(state.room.phase==='playing'&&old!==state.room.turn)state.renderKey='';render();hostWatch();if(isHost()&&state.room.phase==='playing')hostCheck();},err=>showToast('Connessione stanza: '+err.message));}
 async function addBot(){const r=state.room;if(!isHost()||r.players.length>=12)return;const next={...r,players:[...r.players,...botNames(r.players.map(p=>p.avatar),1)],npcToAdd:Math.max(0,r.npcToAdd-(state.online?1:0))};await saveRoom(next)}
 function miniMount(){return $('#game-mount')}
@@ -336,15 +353,15 @@ async function checkExistingSubmission(sess){if(!state.online)return;try{const {
 function startMini(){const r=state.room,g=games.find(x=>x.id===r.miniId)||games[0],s=createTimer(g.duration);if(state.online)checkExistingSubmission(s);const m=miniMount();if(!m)return;
 
  if(g.id==='bridge'){
-   const safe=Array.from({length:7},()=>rand(0,1));let stage=0,wrong=0;
+   const safe=Array.from({length:7},()=>rand(0,1));let stage=0,wrong=0,locked=false;
    const paint=()=>{
      m.innerHTML='<p>Attraversa sette livelli. Una lastra regge, l’altra si dissolve!</p><div class="mini-stage">LIVELLO '+(stage+1)+' / 7</div><div class="bridge-game"><button class="bridge-tile" data-bridge="0"><span>✦</span><b>SINISTRA</b></button><button class="bridge-tile" data-bridge="1"><span>✦</span><b>DESTRA</b></button></div><span class="stat-chip">Passaggi riusciti: '+(stage-wrong)+' · Cadute: '+wrong+'</span>';
    };paint();
-   m.addEventListener('click',e=>{if(s.done)return;const b=e.target.closest('[data-bridge]');if(!b)return;
+   m.addEventListener('click',e=>{if(s.done||locked)return;const b=e.target.closest('[data-bridge]');if(!b)return;locked=true;
      const correct=Number(b.dataset.bridge)===safe[stage];stage++;if(!correct)wrong++;
      s.raw=clamp(Math.round((stage-wrong)/7*100),0,100);
      if(stage>=7)finishMini(s.raw,wrong===0?'Hai attraversato tutti i ponti!':'Hai salvato '+(stage-wrong)+' passaggi!');
-     else{b.classList.add(correct?'tile-safe':'tile-bad');later(230,paint);}
+     else{b.classList.add(correct?'tile-safe':'tile-bad');later(230,()=>{locked=false;paint()});}
    });return;
  }
  if(g.id==='laser'){
@@ -435,6 +452,7 @@ app.addEventListener('click',async e=>{const b=e.target.closest('[data-action]')
  if(a==='start-local')return startLocal();
  if(a==='create-room')return createOnline();
  if(a==='join-room')return joinOnline();
+ if(a==='resume-room')return resumeOnline();
  if(a==='start-match'||a==='next-phase')return hostAdvance();
  if(a==='add-bot')return addBot();
  if(a==='copy-room'){const invite=`LA SCALATA 👑 Entra in partita! Codice: ${state.room.code} | Link: ${location.href.split('?')[0]}`;try{await navigator.clipboard.writeText(invite);showToast('Invito copiato!')}catch(e){showToast('Codice stanza: '+state.room.code)}return}
