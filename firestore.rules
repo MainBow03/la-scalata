@@ -43,7 +43,7 @@ service cloud.firestore {
           && request.resource.data.uid == request.auth.uid
           && request.resource.data.turn is int
           && request.resource.data.raw is number
-          && request.resource.data.raw >= 0 && request.resource.data.raw <= 100
+          && request.resource.data.raw >= 0 && request.resource.data.raw <= 100000
           && request.resource.data.miniId is string
           && request.resource.data.detail is string && request.resource.data.detail.size() <= 160
           && room(code).data.phase == 'playing'
