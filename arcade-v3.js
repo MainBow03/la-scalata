@@ -69,7 +69,7 @@ function question(game,i,random){
 // invece di assegnare il medesimo valore a ogni risposta esatta.
 function gardenRawPoints(correct,timeMs){
  if(!correct)return 0;
- return Math.max(2,Math.min(10,Math.round(10-8*Math.min(1,Math.max(0,timeMs)/5200)*10)/10));
+ return Math.max(2,Math.min(10,Math.round((10-8*Math.min(1,Math.max(0,timeMs)/5200))*10)/10));
 }
 function gardenFlower(hue){
  const petals=Array.from({length:6},(_,k)=>'<ellipse cx="40" cy="20" rx="14" ry="20" transform="rotate('+(k*60)+' 40 40)" fill="hsl('+hue+' 83% 62%)" stroke="hsl('+hue+' 78% 39%)" stroke-width="1.5"/>').join('');
