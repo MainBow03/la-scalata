@@ -2,8 +2,26 @@
 Party game a eliminazione per 4–12 concorrenti, con minigiochi, NPC, grafica scenografica, modalità locale e stanze multiplayer Firebase.
 
 ## Avvio
-L'entrata è **index.html**: usa un server statico oppure GitHub Pages. Il progetto è un sito statico composto da `index.html`, dal motore aggiuntivo `arcade-v3.js` e dal tema `arena-v3.css` e richiede una connessione Internet per il multiplayer e i ritratti esterni.
+L'entrata è **index.html**: usa un server statico oppure GitHub Pages. Il progetto è un sito statico composto da `index.html`, dai motori `arcade-v3.js`, `arcade-v4.js` e dai temi `arena-v3.css`, `arena-v4.css` e richiede una connessione Internet per il multiplayer e i ritratti esterni.
 
+
+## Versione 0.5 — Arcade Lab e Catalogo Minigiochi
+
+La home contiene il nuovo pulsante **📚 Catalogo Minigiochi**: apre una schermata con tutte le prove attive, istruzioni, descrizioni, categorie, filtro per tipologia e ricerca per nome. Un archivio separato elenca le prove classiche che restano nel codice per compatibilità con le vecchie stanze ma **non vengono estratte nelle nuove partite**.
+
+### Sette nuovi minigiochi (meccaniche effettivamente differenti)
+1. **Binari del Caos:** ruota gli scambi ferroviari e costruisci un percorso realmente connesso; quattro mappe.
+2. **Labirinto Cangiante:** esplora un labirinto generato proceduralmente, raccogli tre chiavi e trova il portale; due mappe.
+3. **Assedio al Castello:** difendi tre corsie con un cannone, nemici avanzanti, tempi di ricarica e vite del portone.
+4. **Mosaico Smarrito:** tre puzzle scorrevoli 3×3, generati con mosse legali e quindi sempre risolvibili.
+5. **Ascensore Impazzito:** gestisci sei piani, la capienza massima e le destinazioni dei passeggeri.
+6. **Fuga sui Tetti:** runner in cui saltare e scivolare superando ostacoli in movimento.
+7. **Flipper del Firmamento:** paddle controllabile via mouse, touch o tastiera, pallina fisica, mattoncini e vite.
+
+### Rotazione delle nuove partite
+**16 minigiochi attivi** (7 nuovi e 9 selezionati dalla precedente versione per diversità). Ogni blocco di 12 round normali comprende tutte e sette le novità, più cinque prove diverse estratte fra quelle mantenute; non ripete lo stesso minigioco nel blocco. I vecchi minigiochi non più selezionati sono elencati come **archivio** nel catalogo. Gli spareggi continuano a usare una prova dedicata.
+
+I punteggi di piazzamento **non cambiano**: con otto concorrenti restano **14, 11, 9, 7, 5, 4, 3, 1**. I nuovi minigiochi producono una prestazione da 0 a 100, che stabilisce la graduatoria per assegnare quei punti.
 
 ## Versione 0.4 — Giardino e punteggi dei minigiochi
 - **Giardino delle Illusioni**: 12 aiuole con fiori vettoriali colorati. La griglia passa da 3×3 a 4×3 e infine 4×4; il colore estraneo diventa gradualmente meno evidente.
