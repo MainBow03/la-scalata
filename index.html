@@ -52,6 +52,33 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 @keyframes riseIn{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:700px){.roster .avatar{width:60px!important;height:60px!important;font-size:31px!important}.throne-room{border-radius:17px}.step .mini-contestant .avatar{width:28px!important;height:28px!important;font-size:17px!important}.hero .throne-room{min-height:535px!important}}
 
+
+/* Minigames: ponte, laser, torre, casseforte e ritmo */
+.mini-stage{font:900 clamp(20px,3vw,30px) 'Barlow Condensed';color:#ffe5a1;letter-spacing:.08em;text-shadow:0 0 16px #ffe29b5d}
+.bridge-game{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;width:min(100%,490px);perspective:300px}
+.bridge-tile{min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border:3px solid #bdeaff9c;background:linear-gradient(145deg,#c8efff45,#4a6d9e77);color:#fff;border-radius:13px;box-shadow:inset 0 0 28px #bfe6ff2d,0 12px #1526429e;font:900 20px 'Barlow Condensed';transform:rotateX(8deg)}
+.bridge-tile span{font-size:50px;color:#ccf7ff;text-shadow:0 0 15px #cbf6ff}
+.bridge-tile:hover{background:#68b8f16b;transform:translateY(-3px)}
+.bridge-tile.tile-safe{background:#43af83!important}.bridge-tile.tile-bad{background:#b93563!important}
+.laser-track{width:min(100%,500px);display:grid;grid-template-columns:repeat(5,1fr);gap:5px;border:2px solid #a883e38a;padding:8px;border-radius:16px;background:#110d23}
+.laser-lane{height:165px;min-width:0;border:1px solid #aebbd736;background:linear-gradient(#413365,#201834);color:#a3a0b8;font-size:24px;border-radius:8px;position:relative}
+.laser-lane.is-hero{background:linear-gradient(#f4d999,#6c467e);color:#1d1232;box-shadow:0 0 13px #fbe4a7}
+.laser-lane.is-danger{border-color:#ff6884;background:repeating-linear-gradient(45deg,#c53a5c,#c53a5c 8px,#71253d 8px,#71253d 16px);box-shadow:0 0 15px #ff336677}
+.laser-controls{display:flex;gap:12px;width:min(100%,460px)}
+.laser-controls button{flex:1;min-height:55px;color:#ffe5ad;border:1px solid #d6ad79;background:#32244f;border-radius:12px;font-weight:900}
+.tower-track{height:95px;width:min(100%,510px);position:relative;border-radius:16px;border:3px solid #a78dba;background:linear-gradient(#3b2b58,#191833);box-shadow:inset 0 0 21px #0009;overflow:visible}
+.tower-hitbox{position:absolute;left:42%;width:16%;height:100%;background:#e5c77c44;border:2px solid #f5d898}
+.tower-indicator{position:absolute;top:-13px;bottom:-13px;width:10px;background:#ffffff;border:2px solid #ffd88b;box-shadow:0 0 18px #ffdd90;border-radius:10px;transform:translateX(-50%)}
+.tower-drop{padding:19px 30px;font:900 22px 'Barlow Condensed'}
+.vault-door{padding:20px 29px;border:8px ridge #e8bb7e;background:linear-gradient(145deg,#775c79,#302845);border-radius:18px;color:#ffe5af;font:900 clamp(24px,6vw,48px) 'Barlow Condensed';box-shadow:inset 0 0 20px #0008}
+.vault-door span{letter-spacing:.23em}
+.vault-hints{display:flex;flex-direction:column;gap:5px;font-size:13px;color:#dec9f7;max-height:170px;overflow:auto}
+.vault-hints div{border-bottom:1px solid #ffffff26;padding:3px 8px}
+.rhythm-drum{border-radius:50%;width:min(62vw,240px);height:min(62vw,240px);font-size:78px;color:#f2cc87;border:14px ridge #ab77a2;background:radial-gradient(circle,#69517a,#311e47);box-shadow:0 10px 0 #28192d,inset 0 0 28px #0007;transition:transform .09s,box-shadow .09s}
+.rhythm-drum.beat-now{border-color:#fff0b1;box-shadow:0 0 45px #feeaa1,0 8px 0 #8564a9;transform:scale(1.07)}
+.rhythm-drum.rhythm-good{background:radial-gradient(circle,#d6f7af,#6da88a)}
+@media(max-width:500px){.bridge-tile{min-height:130px;font-size:15px}.laser-lane{height:125px;font-size:19px}.laser-controls button{font-size:12px}}
+
 </style>
 </head>
 <body>
@@ -91,6 +118,12 @@ const games=[
  {id:'sequence',name:'Sequenza Arcana',desc:'Memorizza cinque simboli e ricostruisci la sequenza esatta.',duration:19,kind:'clever',symbol:'🔮'},
  {id:'stars',name:'Conta le Stelle',desc:'Osserva le stelle per pochi secondi, poi indovina quante ne hai viste.',duration:18,kind:'clever',symbol:'✨'},
  {id:'colors',name:'Caos Cromatico',desc:'Premi il colore delle lettere, ignorando la parola che leggi!',duration:23,kind:'quick',symbol:'🎨'},
+
+ {id:'bridge',name:'Ponte delle Illusioni',desc:'Sette ponti di vetro: scegli la lastra sicura a ogni passaggio!',duration:27,kind:'luck',symbol:'🌉'},
+ {id:'laser',name:'Fuga dai Laser',desc:'Scivola fra cinque corsie e schiva i raggi del palazzo.',duration:19,kind:'quick',symbol:'⚡'},
+ {id:'tower',name:'Torre Traballante',desc:'Ferma il blocco al centro del bersaglio per cinque piani.',duration:23,kind:'quick',symbol:'🏗️'},
+ {id:'vault',name:'Cassaforte delle Tre Rune',desc:'Indovina il codice segreto di tre cifre con sei tentativi e indizi.',duration:35,kind:'clever',symbol:'🔐'},
+ {id:'rhythm',name:'Il Battito del Trono',desc:'Colpisci il tamburo quando il cerchio di luce entra nel bersaglio!',duration:18,kind:'quick',symbol:'🥁'},
 ];
 const dialog={quick:['Io parto subito!','Non mi prenderete mai!','Questo round è mio!'],clever:['Ho già un piano.','Osserviamo bene...','Concentrazione assoluta.'],luck:['Mi affido alla fortuna!','Sento che è la volta buona.','È tutto sotto controllo... forse.'],chaos:['SI PARTEEEE!','Questa partita sarà un delirio.','Non ho idea di cosa sto facendo!']};
 const state={view:'home',setupMode:'local',name:'',character:0,npc:5,roundsPerElim:2,difficulty:'normal',room:null,online:false,uid:'offline',fb:null,roomUnsub:null,hostWatch:null,watchTurn:0,mini:null,renderKey:'',hostBusy:false,toastTimeout:null};
@@ -145,7 +178,7 @@ function refreshPortraits(){
 
 const showToast=msg=>{let el=$('#toast');el.textContent=msg;el.classList.add('show');clearTimeout(state.toastTimeout);state.toastTimeout=setTimeout(()=>el.classList.remove('show'),4200);};
 function updateConnection(){const dot=$('#connection-dot'),label=$('#connection-label');dot.classList.toggle('on',state.online);label.textContent=state.online?'Firebase online':'Modalità locale';}
-function cleanupMini(){if(!state.mini)return;clearInterval(state.mini.interval);state.mini.timeouts.forEach(clearTimeout);state.mini=null;}
+function cleanupMini(){if(!state.mini)return;state.mini.cleanup?.();clearInterval(state.mini.interval);state.mini.timeouts.forEach(clearTimeout);state.mini=null;}
 function cleanupRoom(){cleanupMini();if(state.roomUnsub){state.roomUnsub();state.roomUnsub=null}clearInterval(state.hostWatch);state.hostWatch=null;state.online=false;state.uid='offline';state.room=null;state.renderKey='';updateConnection();}
 function switchView(v){state.view=v;state.renderKey='';render();window.scrollTo({top:0,behavior:'smooth'});}
 function stepMarkup(room,preview=false){
@@ -161,7 +194,7 @@ function stepMarkup(room,preview=false){
  }
  return `<div class="throne-room"><div class="arch"></div><span class="spark one">✦</span><span class="spark two">✧</span><span class="spark three">✦</span><div class="throne-top"><span class="crown-art">♛</span><div class="throne-seat">${champion?'👑':'✦'}</div><div class="throne-caption">IL TRONO</div></div><div class="stair-wrap">${rows}</div></div>`;
 }
-function home(){return `<div class="hero"><section class="hero-copy"><p class="eyebrow">✦ IL NUOVO PARTY GAME ✦</p><h1 class="headline">LA<br><span>SCALATA</span></h1><p class="tagline">UN TRONO. MILLE SFIDE. UN VINCITORE.</p><p class="lead">Vinci minigiochi, accumula punti, scampa alle eliminazioni e sali i gradini del palazzo. Quando gli altri cadono, tu continui a salire.</p><div class="actions"><button class="btn btn-gold" data-action="open-local">⚔ GIOCA CONTRO NPC</button><button class="btn btn-purple" data-action="open-online">♛ CREA STANZA ONLINE</button><button class="btn btn-ghost" data-action="open-join">↗ ENTRA CON CODICE</button></div><p class="small-note">La modalità NPC è pronta da provare. Per le partite online attiva l'accesso anonimo e le regole Firestore indicate nel repository.</p><div class="home-badges"><span class="mini-badge">👑 ELIMINAZIONI A FASI</span><span class="mini-badge">🎮 8 MINIGIOCHI · NUOVI IN ARRIVO</span><span class="mini-badge">🤖 NPC CON ABILITÀ</span><span class="mini-badge">📱 TABLET & MOBILE</span></div></section><section aria-label="Anteprima della scalinata">${stepMarkup(null,true)}</section></div>`;}
+function home(){return `<div class="hero"><section class="hero-copy"><p class="eyebrow">✦ IL NUOVO PARTY GAME ✦</p><h1 class="headline">LA<br><span>SCALATA</span></h1><p class="tagline">UN TRONO. MILLE SFIDE. UN VINCITORE.</p><p class="lead">Vinci minigiochi, accumula punti, scampa alle eliminazioni e sali i gradini del palazzo. Quando gli altri cadono, tu continui a salire.</p><div class="actions"><button class="btn btn-gold" data-action="open-local">⚔ GIOCA CONTRO NPC</button><button class="btn btn-purple" data-action="open-online">♛ CREA STANZA ONLINE</button><button class="btn btn-ghost" data-action="open-join">↗ ENTRA CON CODICE</button></div><p class="small-note">La modalità NPC è pronta da provare. Per le partite online attiva l'accesso anonimo e le regole Firestore indicate nel repository.</p><div class="home-badges"><span class="mini-badge">👑 ELIMINAZIONI A FASI</span><span class="mini-badge">🎮 13 MINIGIOCHI</span><span class="mini-badge">🤖 NPC CON ABILITÀ</span><span class="mini-badge">📱 TABLET & MOBILE</span></div></section><section aria-label="Anteprima della scalinata">${stepMarkup(null,true)}</section></div>`;}
 function setup(){const online=state.setupMode==='online',join=state.setupMode==='join';return `<div class="phase-top"><div><p class="eyebrow">IL TUO VIAGGIO INIZIA QUI</p><h1 class="section-title">${join?'UNISCITI ALLA SFIDA':online?'CREA LA TUA STANZA':'PREPARA LA SCALATA'}</h1><p class="subhead">Scegli il tuo personaggio. Scegli fra 28 personaggi e guarda i loro ritratti illustrati.</p></div><button class="btn btn-ghost btn-sm" data-action="home">← HOME</button></div><div class="setup-grid"><div class="card card-padded setup-panel"><div class="card-heading"><h3>⚙ Configurazione</h3></div><div class="field"><label for="player-name">Il tuo soprannome</label><input id="player-name" placeholder="Come vuoi chiamarti?" maxlength="20" value="${esc(state.name)}"></div>${join?`<div class="field"><label for="join-code">Codice stanza</label><input id="join-code" placeholder="ABC123" maxlength="6" style="text-transform:uppercase;letter-spacing:.25em"></div>`:`<div class="field-grid"><div class="field"><label for="npc-count">NPC iniziali</label><select id="npc-count">${Array.from({length:9},(_,i)=>i+3).map(n=>`<option value="${n}" ${state.npc===n?'selected':''}>${n} NPC</option>`).join('')}</select></div><div class="field"><label for="rounds-count">Minigiochi per eliminazione</label><select id="rounds-count">${[1,2,3,4].map(n=>`<option value="${n}" ${state.roundsPerElim===n?'selected':''}>${n} ${n===1?'minigioco':'minigiochi'}</option>`).join('')}</select></div></div><div class="field"><label for="difficulty">Abilità NPC</label><select id="difficulty"><option value="easy" ${state.difficulty==='easy'?'selected':''}>Principianti</option><option value="normal" ${state.difficulty==='normal'?'selected':''}>Bilanciati</option><option value="hard" ${state.difficulty==='hard'?'selected':''}>Campioni</option></select></div><p class="setting-hint">Nella modalità online gli amici possono entrare fino all'avvio. Gli NPC vengono aggiunti quando l'host preme Inizia.</p>`}<div class="divider"></div><div class="card-heading"><h3>Personaggio scelto</h3></div><div style="display:flex;align-items:center;gap:13px">${charAvatar({avatar:state.character},'lg')}<div><strong>${esc(character(state.character).name)}</strong><p class="small-note" style="margin:5px 0">${esc(character(state.character).show)}</p></div></div><div class="actions"><button class="btn btn-gold" style="width:100%" data-action="${join?'join-room':online?'create-room':'start-local'}">${join?'↗ ENTRA NELLA STANZA':online?'♛ CREA STANZA':'⚔ COMINCIA LA PARTITA'}</button></div><p class="small-note">${online||join?'Tutti i partecipanti devono aprire il gioco dallo stesso sito.':'La demo locale funziona anche senza Firebase.'}</p></div><div class="card card-padded"><div class="card-heading"><h3>🌍 Roster multiversale</h3><span class="pill">${roster.length} personaggi</span></div><div class="roster">${roster.map(c=>`<button class="char-card ${state.character===c.id?'selected':''}" data-action="character" data-id="${c.id}" aria-label="Scegli ${esc(c.name)}">${state.character===c.id?'<span class="selected-tick">✓</span>':''}${charAvatar({avatar:c.id})}<span class="char-name">${esc(c.name)}</span><span class="char-show">${esc(c.show)}</span></button>`).join('')}</div><p class="small-note">Ritratti illustrativi caricati online; se una fonte non è disponibile compare un PNG OpenMoji di riserva. Le immagini ufficiali non sono incluse nel progetto.</p></div></div>`;}
 function roomHeader(){const r=state.room;return `<div class="phase-top"><div><p class="eyebrow">${state.online?'LOBBY ONLINE':'SALA DEI CONCORRENTI'}</p><h1 class="section-title">LA PORTA DEL PALAZZO</h1><p class="subhead">${r.players.length} concorrenti · ${r.roundsPerElim} minigiochi prima di ogni eliminazione</p></div><button class="btn btn-ghost btn-sm" data-action="leave">← ESCI</button></div>`;}
 function scoreboard(room,extra=''){const players=[...room.players].sort((a,b)=>(b.alive-a.alive)||(room.phase==='champion'?(b.total-a.total):(b.score-a.score))||(b.total-a.total));const low=Math.min(...players.filter(p=>p.alive).map(p=>p.score));return `<div class="card card-padded"><div class="card-heading"><h3>🏆 Classifica</h3><span class="pill">${alive().length} in gioco</span></div><div class="score-list">${players.map((p,i)=>`<div class="score-item ${p.alive&&p.score===low&&room.phase!=='lobby'?'danger':''} ${!p.alive?'eliminated':''}"><div class="score-rank">${String(i+1).padStart(2,'0')}</div>${charAvatar(p,'sm')}<div style="min-width:0"><div class="score-name">${esc(p.name)} ${p.bot?'🤖':''}${p.uid===state.uid?' · TU':''}</div><div class="score-sub">${p.alive?'Totale: '+p.total:'Eliminato al gradino '+p.eliminatedAt}</div></div><div class="score-point">${p.score}</div></div>`).join('')}</div>${extra}</div>`;}
@@ -229,13 +262,75 @@ function miniMount(){return $('#game-mount')}
 function createTimer(seconds){const r=state.room,until=state.online?r.deadline-1500:Date.now()+seconds*1000;const sess={turn:r.turn,done:false,raw:0,timeouts:[],interval:null,until,submitted:false};state.mini=sess;sess.interval=setInterval(()=>{if(state.mini!==sess)return;let remain=Math.max(0,Math.ceil((sess.until-Date.now())/1000));let clock=$('#clock');if(clock){clock.textContent=String(remain);clock.classList.toggle('urgent',remain<=5)}if(remain<=0&&!sess.done)finishMini(sess.raw||0,'Tempo scaduto')},150);return sess;}
 function later(ms,fn){const s=state.mini;if(!s)return;s.timeouts.push(setTimeout(()=>{if(state.mini===s&&!s.done)fn()},ms));}
 function updateStat(el,text){const e=$(el);if(e)e.textContent=text}
-async function finishMini(raw,detail='Sfida completata'){const s=state.mini;if(!s||s.done)return;s.done=true;s.raw=clamp(Math.round(raw),0,100);clearInterval(s.interval);s.timeouts.forEach(clearTimeout);const mount=miniMount();if(mount)mount.innerHTML=`<div class="finished-panel"><div style="font-size:59px">${s.raw>=80?'🏆':s.raw>=45?'✨':'🎯'}</div><p class="eyebrow">SFIDA TERMINATA</p><div class="finish-big">${s.raw}/100</div><h3>${esc(detail)}</h3><p>${state.online?'Risultato inviato. In attesa degli altri concorrenti...':'Il presentatore sta calcolando la classifica...'}</p></div>`;
+async function finishMini(raw,detail='Sfida completata'){const s=state.mini;if(!s||s.done)return;s.done=true;s.raw=clamp(Math.round(raw),0,100);s.cleanup?.();clearInterval(s.interval);s.timeouts.forEach(clearTimeout);const mount=miniMount();if(mount)mount.innerHTML=`<div class="finished-panel"><div style="font-size:59px">${s.raw>=80?'🏆':s.raw>=45?'✨':'🎯'}</div><p class="eyebrow">SFIDA TERMINATA</p><div class="finish-big">${s.raw}/100</div><h3>${esc(detail)}</h3><p>${state.online?'Risultato inviato. In attesa degli altri concorrenti...':'Il presentatore sta calcolando la classifica...'}</p></div>`;
  if(!state.online){const r=state.room;let results={[state.uid]:s.raw};const next=resolveRound(r,results);laterNoSession(650,()=>{if(state.room?.turn===r.turn){state.room=next;render()}});return}
  try{const {setDoc,doc,serverTimestamp}=state.fb.fs;const r=state.room;await setDoc(doc(state.fb.db,'rooms',r.code,'submissions',`${r.turn}_${state.uid}`),{uid:state.uid,turn:r.turn,miniId:r.miniId,raw:s.raw,detail,submittedAt:serverTimestamp()});hostCheck()}catch(e){showToast('Invio risultato: '+e.message)}
 }
 function laterNoSession(ms,fn){setTimeout(fn,ms)}
 async function checkExistingSubmission(sess){if(!state.online)return;try{const {doc,getDoc}=state.fb.fs;const r=state.room;const snap=await getDoc(doc(state.fb.db,'rooms',r.code,'submissions',`${r.turn}_${state.uid}`));if(snap.exists()&&state.mini===sess&&!sess.done){sess.done=true;clearInterval(sess.interval);const m=miniMount();if(m)m.innerHTML=`<div class="finished-panel"><div style="font-size:50px">✅</div><h3>RISULTATO GIÀ INVIATO</h3><p>Attendi il verdetto di tutti gli altri.</p></div>`;}}catch(e){console.warn('Invio precedente',e)}}
 function startMini(){const r=state.room,g=games.find(x=>x.id===r.miniId)||games[0],s=createTimer(g.duration);if(state.online)checkExistingSubmission(s);const m=miniMount();if(!m)return;
+
+ if(g.id==='bridge'){
+   const safe=Array.from({length:7},()=>rand(0,1));let stage=0,wrong=0;
+   const paint=()=>{
+     m.innerHTML='<p>Attraversa sette livelli. Una lastra regge, l’altra si dissolve!</p><div class="mini-stage">LIVELLO '+(stage+1)+' / 7</div><div class="bridge-game"><button class="bridge-tile" data-bridge="0"><span>✦</span><b>SINISTRA</b></button><button class="bridge-tile" data-bridge="1"><span>✦</span><b>DESTRA</b></button></div><span class="stat-chip">Passaggi riusciti: '+(stage-wrong)+' · Cadute: '+wrong+'</span>';
+   };paint();
+   m.addEventListener('click',e=>{if(s.done)return;const b=e.target.closest('[data-bridge]');if(!b)return;
+     const correct=Number(b.dataset.bridge)===safe[stage];stage++;if(!correct)wrong++;
+     s.raw=clamp(Math.round((stage-wrong)/7*100),0,100);
+     if(stage>=7)finishMini(s.raw,wrong===0?'Hai attraversato tutti i ponti!':'Hai salvato '+(stage-wrong)+' passaggi!');
+     else{b.classList.add(correct?'tile-safe':'tile-bad');later(230,paint);}
+   });return;
+ }
+ if(g.id==='laser'){
+   let lane=2,round=0,hits=0,danger=-1;
+   m.innerHTML='<p>Schiva il raggio rosso! Spostati con le frecce o tocca le corsie.</p><div class="mini-stage" id="laser-stage">PRONTO ALLA FUGA</div><div class="laser-track" id="laser-track"></div><div class="laser-controls"><button data-lane-shift="-1">◀ SINISTRA</button><button data-lane-shift="1">DESTRA ▶</button></div><span class="stat-chip" id="laser-stat">Laser evitati: 0/12</span>';
+   const draw=()=>{const t=m.querySelector('#laser-track');if(t)t.innerHTML=Array.from({length:5},(_,i)=>'<button class="laser-lane '+(lane===i?'is-hero ':'')+(danger===i?'is-danger':'')+'" data-lane="'+i+'">'+(lane===i?'♛':danger===i?'✕':'·')+'</button>').join('')};
+   const move=d=>{lane=clamp(lane+d,0,4);draw()};
+   const onKey=e=>{if(s.done||!['ArrowLeft','ArrowRight','a','d','A','D'].includes(e.key))return;e.preventDefault();move(['ArrowLeft','a','A'].includes(e.key)?-1:1)};
+   document.addEventListener('keydown',onKey);
+   const old=s.cleanup;s.cleanup=()=>{old?.();clearInterval(tick);document.removeEventListener('keydown',onKey)};
+   m.addEventListener('click',e=>{if(s.done)return;const t=e.target.closest('[data-lane]'),b=e.target.closest('[data-lane-shift]');if(t){lane=Number(t.dataset.lane);draw()}if(b)move(Number(b.dataset.laneShift))});
+   draw();
+   const tick=setInterval(()=>{if(s.done)return;danger=rand(0,4);if(danger===lane&&rand(0,3)===0)danger=(danger+rand(1,4))%5;
+     draw();updateStat('#laser-stage','LASER IN CORSIA '+(danger+1)+'!');
+     later(630,()=>{if(s.done)return;if(lane===danger)hits++;round++;s.raw=clamp(Math.round((round-hits)/12*100),0,100);danger=-1;draw();updateStat('#laser-stat','Laser evitati: '+(round-hits)+'/12');if(round===12)finishMini(s.raw,hits===0?'Fuga perfetta!':'Hai schivato '+(round-hits)+' raggi');});
+   },1100);return;
+ }
+ if(g.id==='tower'){
+   let v=0,dir=1,drops=0,total=0;
+   m.innerHTML='<p>Ferma il blocco vicino alla linea dorata. Puoi posizionare cinque piani!</p><div class="mini-stage" id="tower-level">PIANO 1 / 5</div><div class="tower-track"><div class="tower-hitbox"></div><div class="tower-indicator" id="tower-indicator"></div></div><button class="btn btn-gold tower-drop" id="tower-drop">⬇ POSIZIONA BLOCCO</button><div class="stat-chip" id="tower-stat">Precisione: 0</div>';
+   const tick=setInterval(()=>{if(s.done)return;v+=dir*(2+drops*.28);if(v>=100){v=100;dir=-1}if(v<=0){v=0;dir=1}const el=m.querySelector('#tower-indicator');if(el)el.style.left=v+'%'},32);
+   const old=s.cleanup;s.cleanup=()=>{old?.();clearInterval(tick)};
+   m.querySelector('#tower-drop').addEventListener('click',()=>{if(s.done)return;const points=Math.round(clamp(100-Math.abs(50-v)*2.5,0,100));total+=points;drops++;s.raw=Math.round(total/drops);
+     updateStat('#tower-stat','Precisione ultimo piano: '+points+'/100');
+     if(drops===5){finishMini(Math.round(total/5),'Torre completata!');return}
+     updateStat('#tower-level','PIANO '+(drops+1)+' / 5');v=rand(0,18);dir=1;
+   });return;
+ }
+ if(g.id==='vault'){
+   const target=String(rand(0,999)).padStart(3,'0');let tries=0;
+   m.innerHTML='<p>Trova le tre rune (0–9). Dopo ogni prova scopri quante sono nella posizione corretta.</p><div class="vault-door">♜ <span>???</span> ♜</div><form id="vault-form" class="quiz-row"><input class="answer-input" id="vault-guess" type="text" inputmode="numeric" autocomplete="off" maxlength="3" pattern="[0-9]{3}" placeholder="000" aria-label="Codice di tre cifre" required><button class="btn btn-gold" type="submit">PROVA</button></form><div class="vault-hints" id="vault-hints"></div><div class="stat-chip" id="vault-tries">Tentativi rimasti: 6</div>';
+   m.querySelector('#vault-form').addEventListener('submit',e=>{e.preventDefault();if(s.done)return;const guess=m.querySelector('#vault-guess').value;if(!/^[0-9]{3}$/.test(guess))return;tries++;
+     const exact=guess.split('').filter((x,i)=>x===target[i]).length;
+     const tally=x=>{const o={};for(const d of x)o[d]=(o[d]||0)+1;return o};const a=tally(target),b=tally(guess);
+     const any=Object.keys(b).reduce((n,k)=>n+Math.min(b[k],a[k]||0),0)-exact;
+     if(exact===3){finishMini(clamp(115-tries*13,45,100),'La cassaforte si è aperta! '+target);return}
+     m.querySelector('#vault-hints').insertAdjacentHTML('afterbegin','<div>🔎 '+guess+' · '+exact+' al posto giusto · '+any+' cifre fuori posto</div>');
+     updateStat('#vault-tries','Tentativi rimasti: '+(6-tries));s.raw=Math.max(s.raw,exact*22+any*10);
+     if(tries>=6){finishMini(s.raw,'Codice segreto: '+target);return}m.querySelector('#vault-guess').value='';m.querySelector('#vault-guess').focus();
+   });return;
+ }
+ if(g.id==='rhythm'){
+   let beats=0,perfect=0,errors=0,lastHit=-1;const epoch=performance.now()+1350,period=1020;
+   m.innerHTML='<p>Tocca il tamburo ogni volta che il cerchio si accende. Hai 12 battiti!</p><div class="mini-stage" id="rhythm-count">PREPARATI...</div><button id="rhythm-hit" class="rhythm-drum">♛</button><span class="stat-chip" id="rhythm-stat">Colpi precisi: 0/12</span>';
+   const tick=setInterval(()=>{if(s.done)return;const now=performance.now(),n=Math.round((now-epoch)/period),diff=Math.abs(now-(epoch+n*period));const el=m.querySelector('#rhythm-hit');if(el)el.classList.toggle('beat-now',n>=0&&n<12&&diff<180);updateStat('#rhythm-count',n>=0&&n<12?'BATTITO '+(n+1)+' / 12':n>=12?'ULTIMO COLPO!':'ASCOLTA IL RITMO');if(now>epoch+12*period+500)finishMini(clamp(Math.round(perfect/12*100-errors*3),0,100),'Concerto terminato!')},55);
+   const old=s.cleanup;s.cleanup=()=>{old?.();clearInterval(tick)};
+   m.querySelector('#rhythm-hit').addEventListener('click',()=>{if(s.done)return;const now=performance.now(),n=Math.round((now-epoch)/period),diff=Math.abs(now-(epoch+n*period));if(n<0||n>=12||n===lastHit){errors++;return}lastHit=n;if(diff<220){perfect++;s.raw=clamp(Math.round(perfect/12*100-errors*3),0,100);m.querySelector('#rhythm-hit').classList.add('rhythm-good');later(180,()=>m.querySelector('#rhythm-hit')?.classList.remove('rhythm-good'))}else errors++;
+     updateStat('#rhythm-stat','Colpi precisi: '+perfect+'/12');if(perfect===12)finishMini(100,'Concerto perfetto!');
+   });return;
+ }
+
  if(g.id==='target'){
  let hits=0,misses=0,hot=rand(0,15);m.innerHTML=`<p>Tocca solo la casella con la corona!</p><div class="grid-target">${Array.from({length:16},(_,i)=>`<button class="target-cell" data-cell="${i}">✦</button>`).join('')}</div><div class="minigame-stats"><span class="stat-chip" id="hits">Corone: 0</span><span class="stat-chip" id="miss">Errori: 0</span></div>`;
  const paint=()=>m.querySelectorAll('[data-cell]').forEach((el,i)=>{el.textContent=i===hot?'👑':'✦';el.classList.toggle('hot',i===hot)});paint();m.addEventListener('click',e=>{if(s.done)return;const btn=e.target.closest('[data-cell]');if(!btn)return;if(Number(btn.dataset.cell)===hot){hits++;hot=(hot+rand(1,15))%16;paint();updateStat('#hits',`Corone: ${hits}`);if(hits>=10)finishMini(clamp(hits*10-misses*5,0,100),'Il collezionista di corone!');}else{misses++;updateStat('#miss',`Errori: ${misses}`)}s.raw=clamp(hits*10-misses*5,0,100)});return;
