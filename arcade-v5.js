@@ -2,11 +2,11 @@
 (function(){
 'use strict';
 const V5=[
- {id:'skyline',name:'Fuga sui Tetti · Definitiva',desc:'Runner con salti fisici, scivolate e ostacoli leggibili.',symbol:'🏃',kind:'quick',duration:91,how:'Corri per ottenere più metri degli avversari. Salta gli ostacoli bassi e scivola sotto le travi. Tre cuori: ogni errore conta.',mechanic:'Platform fisico',version:5},
- {id:'citadel',name:'Assedio della Fortezza',desc:'Tre corsie, proiettili reali, più ondate e sette difese.',symbol:'🏰',kind:'quick',duration:91,how:'Seleziona una corsia e spara ai nemici che avanzano. Alcuni hanno armatura: servono più colpi. Vince chi ne ferma di più.',mechanic:'Arcade difesa',version:5},
- {id:'stellar',name:'Cristalli del Firmamento',desc:'Rompimattoni con fisica, combo, tre vite e mira della racchetta.',symbol:'🌌',kind:'quick',duration:100,how:'Controlla la racchetta con dito, mouse o frecce. Distruggi quanti più cristalli possibile senza perdere le tre palline.',mechanic:'Rompimattoni',version:5},
- {id:'railway',name:'Treno del Labirinto',desc:'Ruota binari, pianifica un percorso e fai partire il treno.',symbol:'🚆',kind:'strategy',duration:125,how:'Gira i binari per collegare la locomotiva alla stazione. Controlla la rotta e completa tre mappe: vince chi ne risolve di più.',mechanic:'Puzzle di connessione',version:5},
- {id:'liftmaster',name:'Ascensore Reale',desc:'Trasporta passeggeri veri attraverso sei piani e tre posti.',symbol:'🛗',kind:'strategy',duration:111,how:'Tocca un piano per far partire l’ascensore. Carica fino a tre passeggeri e accompagnali alla destinazione. Conta il numero di consegne.',mechanic:'Gestione e pianificazione',version:5}
+ {id:'skyline',name:'Fuga sui Tetti · Definitiva',desc:'Runner con salti fisici, scivolate e ostacoli leggibili.',symbol:'🏃',kind:'quick',duration:91,how:'Corri per ottenere più metri degli avversari. Salta gli ostacoli bassi e scivola sotto le travi. Tre cuori: ogni errore conta.',mechanic:'Platform fisico',version:5,reborn:true},
+ {id:'citadel',name:'Assedio della Fortezza',desc:'Tre corsie, proiettili reali, più ondate e sette difese.',symbol:'🏰',kind:'quick',duration:91,how:'Seleziona una corsia e spara ai nemici che avanzano. Alcuni hanno armatura: servono più colpi. Vince chi ne ferma di più.',mechanic:'Arcade difesa',version:5,reborn:true},
+ {id:'stellar',name:'Cristalli del Firmamento',desc:'Rompimattoni con fisica, combo, tre vite e mira della racchetta.',symbol:'🌌',kind:'quick',duration:100,how:'Controlla la racchetta con dito, mouse o frecce. Distruggi quanti più cristalli possibile senza perdere le tre palline.',mechanic:'Rompimattoni',version:5,reborn:true},
+ {id:'railway',name:'Treno del Labirinto',desc:'Ruota binari, pianifica un percorso e fai partire il treno.',symbol:'🚆',kind:'strategy',duration:125,how:'Gira i binari per collegare la locomotiva alla stazione. Controlla la rotta e completa tre mappe: vince chi ne risolve di più.',mechanic:'Puzzle di connessione',version:5,reborn:true},
+ {id:'liftmaster',name:'Ascensore Reale',desc:'Trasporta passeggeri veri attraverso sei piani e tre posti.',symbol:'🛗',kind:'strategy',duration:111,how:'Tocca un piano per far partire l’ascensore. Carica fino a tre passeggeri e accompagnali alla destinazione. Conta il numero di consegne.',mechanic:'Gestione e pianificazione',version:5,reborn:true}
 ];
 games.unshift(...V5);
 const prevMini=startMini,prevBot=rawForBot,prevChoose=chooseMini;
@@ -209,7 +209,7 @@ function railway(s,g,r){
   board=Array.from({length:N},()=>({base:r()<.52?['N','S']:pick(r,[['E','N'],['E','S'],['N','W'],['S','W']]).slice(),rot:rand(r,0,3),route:false}));
   const path=[[0,2]];let cy=2;
   for(let x=1;x<W;x++){
-   path.push([x,cy]);const target=x===W-1?2:rand(r,1,3);
+   path.push([x,cy]);const target=x===W-1?2:x===W-2?2:rand(r,1,3);
    while(cy!==target){cy+=Math.sign(target-cy);path.push([x,cy]);}
   }
   path.forEach(([x,y],i)=>{
@@ -219,7 +219,7 @@ function railway(s,g,r){
    function dir(q){return q[0]>x?'E':q[0]<x?'W':q[1]>y?'S':'N'}
    const base=[dir(prev),dir(next)];board[key(x,y)]={base,rot:rand(r,0,3),route:true};
   });
-  const begins=board[0*W+2],ends=board[2*W+5];begins.rot=0;ends.rot=0;
+  const begins=board[2*W+0],ends=board[2*W+5];begins.rot=0;ends.rot=0;
  }
  function exits(i){return rotate(board[i].base,board[i].rot)}
  function trace(){
