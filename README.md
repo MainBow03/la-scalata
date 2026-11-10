@@ -4,6 +4,15 @@ Party game a eliminazione per 4–12 concorrenti, con minigiochi, NPC, grafica s
 ## Avvio
 L'entrata è **index.html**: usa un server statico oppure GitHub Pages. Il progetto è un sito statico composto da `index.html`, dal motore aggiuntivo `arcade-v3.js` e dal tema `arena-v3.css` e richiede una connessione Internet per il multiplayer e i ritratti esterni.
 
+
+## Versione 0.4 — Giardino e punteggi dei minigiochi
+- **Giardino delle Illusioni**: 12 aiuole con fiori vettoriali colorati. La griglia passa da 3×3 a 4×3 e infine 4×4; il colore estraneo diventa gradualmente meno evidente.
+- Ogni risposta corretta vale **da 2 a 10 punti**, in base al tempo trascorso nella singola aiuola (5,2 secondi massimi). Un errore o una mancata risposta vale 0 punti.
+- Il risultato finale del minigioco (0–100) serve per ordinare le prestazioni; **non viene più aggiunto direttamente alla classifica di fase**.
+- I premi per 8 giocatori, dal primo all'ultimo: **14, 11, 9, 7, 5, 4, 3, 1**. Con altri numeri di giocatori da 4 a 12 la tabella scala mantenendo primo 14 e ultimo 1. A pari prestazione vengono assegnati gli stessi punti della posizione condivisa; può scattare lo spareggio al momento dell'eliminazione.
+- Nuova schermata risultati con **podio dei primi tre**, classifica completa, barra delle prestazioni, premio ottenuto e punteggio cumulato nella fase.
+- Le eliminazioni continuano a verificarsi ogni N minigiochi come stabilito dall'host; il concorrente con meno punti della fase viene eliminato.
+
 ## Attivazione multiplayer — OBBLIGATORIA
 La web config del progetto Firebase **la-scalata-1c162** è già inserita nel sito, ma non basta da sola:
 1. Apri [Firebase Console](https://console.firebase.google.com/).
